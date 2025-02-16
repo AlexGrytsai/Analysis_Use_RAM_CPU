@@ -1,4 +1,5 @@
 import uuid
+from collections import deque
 
 from performance_monitoring.timer import timer_of_execution
 
@@ -24,6 +25,19 @@ def check_entry_object_in_set(
     for _ in range(number_of_checks):
         entry_object: str = uuid.uuid4().hex
         if entry_object in set_of_objects:
+            continue
+        else:
+            continue
+
+
+@timer_of_execution
+def check_entry_object_in_deque(
+    deque_of_objects: deque,
+    number_of_checks: int,
+) -> None:
+    for _ in range(number_of_checks):
+        entry_object: str = uuid.uuid4().hex
+        if entry_object in deque_of_objects:
             continue
         else:
             continue
