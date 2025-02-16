@@ -15,6 +15,7 @@ def memory_object_report(obj: Any, detailed: bool = False) -> None:
     # Create a set to keep track of objects that have already been processed
     seen = set()
     total_size = 0
+    total_num_objects = 0
     queue = deque([(obj, "root")])
 
     print(f"\n📊 Memory Report for: {obj.__class__.__name__}")
@@ -31,6 +32,7 @@ def memory_object_report(obj: Any, detailed: bool = False) -> None:
         seen.add(id(current_obj))
         size = sys.getsizeof(current_obj)
         total_size += size
+        total_num_objects += 1
         if detailed:
             print(f"{path}: {size} bytes ({type(current_obj)})")
 
@@ -51,5 +53,8 @@ def memory_object_report(obj: Any, detailed: bool = False) -> None:
                 )
     if detailed:
         print("-" * 50)
-    print(f"🟢 Total Memory Used: {total_size / 1024 / 1024:.2f} MB")
+    print(
+        f"🟢 Total Memory Used: {total_size / 1024 / 1024:.2f} MB "
+        f"({total_num_objects} objects)"
+    )
     print(f"{'*' * 50}\n")
