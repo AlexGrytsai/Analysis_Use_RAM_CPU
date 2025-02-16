@@ -1,5 +1,5 @@
 from collections import deque
-from typing import List
+from typing import List, Dict
 
 from performance_monitoring.timer import timer_of_execution
 from utils.uuid_generator import generate_uuids
@@ -27,3 +27,11 @@ def generate_ids_in_deque(num_of_ids: int) -> deque[str]:
     for uid in generate_uuids(num_of_ids):
         ids_deque.append(uid)
     return ids_deque
+
+
+@timer_of_execution
+def generate_ids_in_dict(num_of_ids: int) -> Dict[str, str]:
+    ids_dict = {}
+    for uid in generate_uuids(num_of_ids):
+        ids_dict[uid] = uid
+    return ids_dict
