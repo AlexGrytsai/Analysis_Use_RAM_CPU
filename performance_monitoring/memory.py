@@ -39,7 +39,7 @@ def memory_object_report(obj: Any, detailed: bool = False) -> None:
         if hasattr(current_obj, "__dict__"):
             for attr, value in vars(current_obj).items():
                 queue.append((value, f"{path}.{attr}"))
-        elif isinstance(current_obj, (list, tuple, set)):
+        elif isinstance(current_obj, (list, tuple, set, deque)):
             for i, item in enumerate(current_obj):
                 queue.append((item, f"{path}[{i}]"))
         elif isinstance(current_obj, dict):
