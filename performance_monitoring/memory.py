@@ -4,7 +4,7 @@ from collections import deque
 from typing import Any
 
 
-def memory_object_report(obj: Any) -> None:
+def memory_object_report(obj: Any, detailed: bool = False) -> None:
     """
     Prints a memory report for the given object, including
     the total memory used and the module where the object is defined.
@@ -30,7 +30,8 @@ def memory_object_report(obj: Any) -> None:
         seen.add(id(current_obj))
         size = sys.getsizeof(current_obj)
         total_size += size
-        print(f"{path}: {size} bytes ({type(current_obj)})")
+        if detailed:
+            print(f"{path}: {size} bytes ({type(current_obj)})")
 
         if hasattr(current_obj, "__dict__"):
             for attr, value in vars(current_obj).items():
