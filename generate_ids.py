@@ -1,11 +1,8 @@
-import uuid
-from typing import List, Any, Generator
+from typing import List
 
 from performance_monitoring.timer import timer_of_execution
+from utils.uuid_generator import generate_uuids
 
-def generate_uuids(num_of_ids: int) -> Generator[str, Any, None]:
-    for _ in range(num_of_ids):
-        yield uuid.uuid4().hex
 
 @timer_of_execution
 def generate_ids_in_list(num_of_ids: int) -> List[str]:
