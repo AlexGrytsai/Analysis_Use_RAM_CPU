@@ -11,6 +11,7 @@ def generate_ids_in_list(num_of_ids: int) -> List[str]:
         ids_list.append(uid)
     return ids_list
 
+
 @timer_of_execution
 def generate_ids_in_set(num_of_ids: int) -> set[str]:
     ids_set = set()
