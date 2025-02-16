@@ -19,7 +19,8 @@ def memory_object_report(obj: Any, detailed: bool = False) -> None:
 
     print(f"\n📊 Memory Report for: {obj.__class__.__name__}")
     print(f"📍 Module: {module_name}")
-    print("-" * 50)
+    if detailed:
+        print("-" * 50)
 
     while queue:
         current_obj, path = queue.popleft()
@@ -48,7 +49,7 @@ def memory_object_report(obj: Any, detailed: bool = False) -> None:
                 queue.append(
                     (getattr(current_obj, attr, None), f"{path}.{attr}")
                 )
-
-    print("-" * 50)
-    print(f"🟢 Total Memory Used: {total_size}")
+    if detailed:
+        print("-" * 50)
+    print(f"🟢 Total Memory Used: {total_size / 1024 / 1024:.2f} MB")
     print("*" * 50)
