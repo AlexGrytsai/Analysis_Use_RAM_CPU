@@ -1,3 +1,6 @@
+[tool.black]
+line-length = 79
+
 [tool.poetry]
 name = "analysisuseram"
 version = "0.1.0"
@@ -7,6 +10,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+black = "^25.1.0"
 
 
 [build-system]
