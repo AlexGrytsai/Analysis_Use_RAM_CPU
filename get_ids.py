@@ -1,3 +1,4 @@
+from collections import deque
 from typing import List
 
 from performance_monitoring.timer import timer_of_execution
@@ -18,3 +19,11 @@ def generate_ids_in_set(num_of_ids: int) -> set[str]:
     for uid in generate_uuids(num_of_ids):
         ids_set.add(uid)
     return ids_set
+
+
+@timer_of_execution
+def generate_ids_in_deque(num_of_ids: int) -> deque[str]:
+    ids_deque = deque([])
+    for uid in generate_uuids(num_of_ids):
+        ids_deque.append(uid)
+    return ids_deque
