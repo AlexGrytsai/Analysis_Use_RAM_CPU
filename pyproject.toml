@@ -2,11 +2,12 @@
 line-length = 79
 
 [tool.poetry]
-name = "analysisuseram"
+name = "Analysis use RAM in Python"
 version = "0.1.0"
 description = ""
-authors = ["Alex Grytsai <a.grytsai1987@gmail.com>"]
+authors = ["Alex Grytsai <grytsai.alex@gmail.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
