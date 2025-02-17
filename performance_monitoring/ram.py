@@ -14,7 +14,7 @@ def print_ram_usage(
             print(f"  Time {i * interval:.2f} seconds: {usage:.2f} MB")
 
     max_mem = max(mem_usage) if mem_usage else 0
-    print(f"\n  📊 Peak use RAM: {max_mem:.2f} MB")
+    print(f"  📊 Peak use RAM: {max_mem:.2f} MB")
 
 
 def ram_monitor_decorator(

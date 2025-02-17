@@ -54,7 +54,7 @@ def memory_object_report(obj: Any, detailed: bool = False) -> None:
     if detailed:
         print("-" * 50)
     print(
-        f"🟢 Total Memory Used: {total_size / 1024 / 1024:.2f} MB "
+        f"🟢 Total Memory Object Used: {total_size / 1024 / 1024:.2f} MB "
         f"({total_num_objects} objects)"
     )
     print("*" * 50)
