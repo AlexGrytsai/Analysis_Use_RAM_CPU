@@ -17,6 +17,7 @@ psutil = "^7.0.0"
 pytz = "^2025.1"
 python-dateutil = "^2.9.0.post0"
 pydantic = "^2.10.6"
+matplotlib = "^3.10.0"
 
 
 [build-system]
