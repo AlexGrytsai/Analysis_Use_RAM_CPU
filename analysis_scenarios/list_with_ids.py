@@ -10,24 +10,24 @@ from performance_monitoring.ram import ram_monitor_decorator
 
 
 def analyze_performance_generation_list_with_ids(
-    num_ids: int,
+    num_ids: int, graph: bool = False
 ) -> None:
-    ids_list = ram_monitor_decorator(is_detail=True)(
-        cpu_monitor_decorator(generate_ids_in_list)
+    ids_list = ram_monitor_decorator(plot_graph=graph)(
+        cpu_monitor_decorator()(generate_ids_in_list)
     )(num_ids)
     memory_object_report(ids_list)
 
-    ids_deque = ram_monitor_decorator(is_detail=True)(
-        cpu_monitor_decorator(generate_ids_in_deque)
+    ids_deque = ram_monitor_decorator(plot_graph=graph)(
+        cpu_monitor_decorator()(generate_ids_in_deque)
     )(num_ids)
     memory_object_report(ids_deque)
 
-    ids_set = ram_monitor_decorator(is_detail=True)(
-        cpu_monitor_decorator(generate_ids_in_set)
+    ids_set = ram_monitor_decorator(plot_graph=graph)(
+        cpu_monitor_decorator()(generate_ids_in_set)
     )(num_ids)
     memory_object_report(ids_set)
 
-    ids_dict = ram_monitor_decorator(is_detail=True)(
-        cpu_monitor_decorator(generate_ids_in_dict)
+    ids_dict = ram_monitor_decorator(plot_graph=graph)(
+        cpu_monitor_decorator()(generate_ids_in_dict)
     )(num_ids)
     memory_object_report(ids_dict)
