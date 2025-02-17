@@ -2,9 +2,11 @@ from collections import deque
 from typing import List, Dict
 
 from performance_monitoring.cpu import cpu_monitor_decorator
+from performance_monitoring.ram import ram_monitor_decorator
 from utils.uuid_generator import generate_uuids
 
 
+@ram_monitor_decorator()
 @cpu_monitor_decorator
 def generate_ids_in_list(num_of_ids: int) -> List[str]:
     ids_list = []
@@ -13,6 +15,7 @@ def generate_ids_in_list(num_of_ids: int) -> List[str]:
     return ids_list
 
 
+@ram_monitor_decorator()
 @cpu_monitor_decorator
 def generate_ids_in_set(num_of_ids: int) -> set[str]:
     ids_set = set()
@@ -21,6 +24,7 @@ def generate_ids_in_set(num_of_ids: int) -> set[str]:
     return ids_set
 
 
+@ram_monitor_decorator()
 @cpu_monitor_decorator
 def generate_ids_in_deque(num_of_ids: int) -> deque[str]:
     ids_deque = deque([])
@@ -29,6 +33,7 @@ def generate_ids_in_deque(num_of_ids: int) -> deque[str]:
     return ids_deque
 
 
+@ram_monitor_decorator()
 @cpu_monitor_decorator
 def generate_ids_in_dict(num_of_ids: int) -> Dict[str, str]:
     ids_dict = {}
