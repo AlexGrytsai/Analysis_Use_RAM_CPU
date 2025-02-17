@@ -40,3 +40,20 @@ def make_graph_for_cpu(
     )
 
     plt.show()
+
+
+def make_graph(mem_usage, interval, func_name):
+    plt.figure(figsize=(10, 6))
+    plt.plot(
+        [i * interval for i in range(len(mem_usage))],
+        mem_usage,
+        marker="o",
+        color="b",
+        label="RAM Usage (MB)",
+    )
+    plt.title(f"RAM Usage for Function: {func_name}")
+    plt.xlabel("Time (seconds)")
+    plt.ylabel("RAM Usage (MB)")
+    plt.grid(True)
+    plt.legend()
+    plt.show()
