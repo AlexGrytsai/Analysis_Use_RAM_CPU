@@ -6,7 +6,7 @@ from utils.get_test_data import get_test_data_from_json
 
 
 @timer_of_execution
-def fetch_test_data_in_list(file_path: str) -> List[dict[str, Any]]:
+def add_test_data_to_list(file_path: str) -> List[dict[str, Any]]:
     data_list = []
     for data in get_test_data_from_json(file_path):
         data_list.append(data)
@@ -14,7 +14,7 @@ def fetch_test_data_in_list(file_path: str) -> List[dict[str, Any]]:
 
 
 @timer_of_execution
-def fetch_test_data_in_set(file_path: str) -> set[Dict[str, Any]] | None:
+def add_test_data_to_set(file_path: str) -> set[Dict[str, Any]] | None:
     data_set = set()
     for data in get_test_data_from_json(file_path):
         try:
@@ -26,7 +26,7 @@ def fetch_test_data_in_set(file_path: str) -> set[Dict[str, Any]] | None:
 
 
 @timer_of_execution
-def fetch_test_data_in_deque(file_path: str) -> deque[Dict[str, Any]]:
+def add_test_data_to_deque(file_path: str) -> deque[Dict[str, Any]]:
     data_deque = deque([])
     for data in get_test_data_from_json(file_path):
         data_deque.append(data)
