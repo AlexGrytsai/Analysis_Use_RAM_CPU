@@ -1,6 +1,3 @@
-from collections import deque
-from typing import Tuple
-
 from get_ids import (
     generate_ids_in_list,
     generate_ids_in_set,
