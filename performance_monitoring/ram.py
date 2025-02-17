@@ -4,7 +4,8 @@ import time
 from typing import Callable
 
 import psutil
-from matplotlib import pyplot as plt
+
+from utils.graphs import make_graph
 
 
 def print_ram_usage(
@@ -20,7 +21,7 @@ def print_ram_usage(
 
 
 def ram_monitor_decorator(
-    interval: float = 0.1, is_detail: bool = False, graph: bool = False
+    interval: float = 0.1, is_detail: bool = False, plot_graph: bool = False
 ) -> Callable:
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
@@ -45,7 +46,7 @@ def ram_monitor_decorator(
                 thread.join()
 
             print_ram_usage(mem_usage, interval, func.__name__, is_detail)
-            if graph:
+            if plot_graph:
                 make_graph(mem_usage, interval, func.__name__)
 
             return result
