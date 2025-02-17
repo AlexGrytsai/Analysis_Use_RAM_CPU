@@ -1,8 +1,27 @@
-import psutil
-import time
 import functools
-from typing import Callable
 import threading
+import time
+from typing import Callable
+
+import psutil
+from matplotlib import pyplot as plt
+
+
+def make_graph(mem_usage, interval, func_name):
+    plt.figure(figsize=(10, 6))
+    plt.plot(
+        [i * interval for i in range(len(mem_usage))],
+        mem_usage,
+        marker="o",
+        color="b",
+        label="RAM Usage (MB)",
+    )
+    plt.title(f"RAM Usage for Function: {func_name}")
+    plt.xlabel("Time (seconds)")
+    plt.ylabel("RAM Usage (MB)")
+    plt.grid(True)
+    plt.legend()
+    plt.show()
 
 
 def print_ram_usage(
@@ -44,6 +63,7 @@ def ram_monitor_decorator(
                 thread.join()
 
             print_ram_usage(mem_usage, interval, func.__name__, is_detail)
+            # make_graph(mem_usage, interval, func.__name__)
 
             return result
 
