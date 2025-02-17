@@ -8,8 +8,6 @@ from performance_monitoring.ram import ram_monitor_decorator
 from utils.get_test_data import get_test_data_from_json
 
 
-@ram_monitor_decorator()
-@cpu_monitor_decorator
 def add_test_data_to_list(
     file_path: str, num_of_ids: int
 ) -> List[dict[str, Any]]:
@@ -19,8 +17,6 @@ def add_test_data_to_list(
     return data_list
 
 
-@ram_monitor_decorator()
-@cpu_monitor_decorator
 def add_test_data_to_set(
     file_path: str, num_of_ids: int
 ) -> set[Dict[str, Any]] | None:
@@ -34,8 +30,6 @@ def add_test_data_to_set(
     return data_set if data_set else None
 
 
-@ram_monitor_decorator()
-@cpu_monitor_decorator
 def add_test_data_to_deque(
     file_path: str, num_of_ids: int
 ) -> deque[Dict[str, Any]]:
@@ -45,8 +39,6 @@ def add_test_data_to_deque(
     return data_deque
 
 
-@ram_monitor_decorator()
-@cpu_monitor_decorator
 def add_test_data_to_dict(file_path: str, num_of_ids: int) -> Dict[str, Any]:
     data_dict = {}
     for data in get_test_data_from_json(file_path, num_of_ids):
@@ -55,20 +47,22 @@ def add_test_data_to_dict(file_path: str, num_of_ids: int) -> Dict[str, Any]:
 
 
 def main_analyze_creation_test_data(file_path: str, num_of_ids: int) -> None:
-    data_in_list = add_test_data_to_list(file_path, num_of_ids)
+    data_in_list = ram_monitor_decorator(is_detail=False)(
+        cpu_monitor_decorator(add_test_data_to_list)(file_path, num_of_ids)
+    )
     memory_object_report(data_in_list)
 
-    data_in_deque = add_test_data_to_deque(file_path, num_of_ids)
+    data_in_deque = ram_monitor_decorator(is_detail=False)(
+        cpu_monitor_decorator(add_test_data_to_deque)(file_path, num_of_ids)
+    )
     memory_object_report(data_in_deque)
 
-    data_in_set = add_test_data_to_set(file_path, num_of_ids)
+    data_in_set = ram_monitor_decorator(is_detail=False)(
+        cpu_monitor_decorator(add_test_data_to_set)(file_path, num_of_ids)
+    )
     memory_object_report(data_in_set)
 
-    data_in_dict = add_test_data_to_dict(file_path, num_of_ids)
+    data_in_dict = ram_monitor_decorator(is_detail=False)(
+        cpu_monitor_decorator(add_test_data_to_dict)(file_path, num_of_ids)
+    )
     memory_object_report(data_in_dict)
-
-
-if __name__ == "__main__":
-    file_path = "../test_data.json"
-    num_of_ids = 1_000
-    main_analyze_creation_test_data(file_path, num_of_ids)
