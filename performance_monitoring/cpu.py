@@ -4,6 +4,7 @@ import time
 from typing import Callable
 
 import psutil
+from matplotlib import pyplot as plt
 
 running = False
 cpu_usage_data = []
@@ -14,6 +15,23 @@ def monitor_cpu_usage(interval=0.1):
     cpu_usage_data = []
     while running:
         cpu_usage_data.append(psutil.cpu_percent(interval=interval))
+
+
+def make_graph_for_cpu(cpu_usage: list, func_name: str) -> None:
+    plt.figure(figsize=(10, 6))
+    plt.plot(
+        [i * 0.1 for i in range(len(cpu_usage))],
+        cpu_usage_data,
+        marker="o",
+        color="r",
+        label="CPU Usage (%)",
+    )
+    plt.title(f"CPU Usage for Function: {func_name}")
+    plt.xlabel("Time (seconds)")
+    plt.ylabel("CPU Usage (%)")
+    plt.grid(True)
+    plt.legend()
+    plt.show()
 
 
 def cpu_monitor_decorator(func: Callable) -> Callable:
@@ -40,6 +58,8 @@ def cpu_monitor_decorator(func: Callable) -> Callable:
         print(f"  🕒 Execution time: {end_time - start_time:.4f} seconds")
         print(f"  ⚡ Average CPU Load: {avg_cpu:.2f}%")
         print(f"  🚀 Peak CPU Load: {max_cpu:.2f}%\n")
+
+        make_graph_for_cpu(cpu_usage=cpu_usage_data, func_name=func.__name__)
 
         return result
 
