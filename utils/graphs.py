@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 
 
-def make_graph_for_cpu(
+def plot_individual_graph_for_cpu(
     cpu_usage: list,
     func_name: str,
     exec_time: float,
@@ -39,6 +39,28 @@ def make_graph_for_cpu(
         bbox=dict(facecolor="white", alpha=0.8, edgecolor="gray"),
     )
 
+    plt.show()
+
+
+def plot_combined_graph_for_cpu(cpu_data: dict) -> None:
+    plt.figure(figsize=(10, 6))
+
+    for func_name, data in cpu_data.items():
+        exec_time, avg_cpu, max_cpu, cpu_usage = data
+
+        plt.plot(
+            [i * 0.1 for i in range(len(cpu_usage))],
+            cpu_usage,
+            marker="o",
+            label=f"{func_name} (Exec Time: {exec_time:.2f}s, Avg CPU: {avg_cpu:.2f}%, Peak CPU: {max_cpu:.2f}%)",
+        )
+
+    plt.title("CPU Usage Comparison")
+    plt.xlabel("Time (seconds)")
+    plt.ylabel("CPU Usage (%)")
+    plt.ylim(0, 50)
+    plt.grid(True)
+    plt.legend()
     plt.show()
 
 
