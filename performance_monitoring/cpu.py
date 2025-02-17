@@ -37,9 +37,9 @@ def cpu_monitor_decorator(func: Callable) -> Callable:
         max_cpu = max(cpu_usage_data, default=0)
 
         print(f"\n📊 CPU Usage Report for '{func.__name__}':")
-        print(f"🕒 Execution time: {end_time - start_time:.4f} seconds")
-        print(f"⚡ Average CPU Load: {avg_cpu:.2f}%")
-        print(f"🚀 Peak CPU Load: {max_cpu:.2f}%\n")
+        print(f"  🕒 Execution time: {end_time - start_time:.4f} seconds")
+        print(f"  ⚡ Average CPU Load: {avg_cpu:.2f}%")
+        print(f"  🚀 Peak CPU Load: {max_cpu:.2f}%\n")
 
         return result
 
