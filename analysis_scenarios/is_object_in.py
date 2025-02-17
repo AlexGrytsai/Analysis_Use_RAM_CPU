@@ -8,6 +8,8 @@ from get_ids import (
     generate_ids_in_deque,
     generate_ids_in_dict,
 )
+from performance_monitoring.cpu import cpu_monitor_decorator
+from performance_monitoring.ram import ram_monitor_decorator
 from performance_monitoring.timer import timer_of_execution
 
 
@@ -44,9 +46,10 @@ def check_entry_object_in_list(
             continue
 
 
-@timer_of_execution
+@ram_monitor_decorator()
+@cpu_monitor_decorator
 def analyze_check_is_object_in_(
-    list_of_ids: List[str],
+    list_of_ids: Union[List[str], Dict[str, str], Set[str], deque],
     num_checks: int,
 ) -> None:
     check_entry_object_in_list(
