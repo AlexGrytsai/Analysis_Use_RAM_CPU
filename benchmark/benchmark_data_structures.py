@@ -70,8 +70,9 @@ def benchmark_data_structures(
 
     loaded_data = {}
     for name, func in data_structures.items():
-        loaded_data[name] = func(key_list=redis_keys,
-                                 redis_client=redis_client)
+        loaded_data[name] = func(
+            key_list=redis_keys, redis_client=redis_client
+        )
         sleep(1)
 
     if memory_report:
