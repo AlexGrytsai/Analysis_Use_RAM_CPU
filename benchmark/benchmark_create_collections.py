@@ -17,6 +17,7 @@ def measure_resource_usage(
     generator,
     num_ids: int,
     graph: bool = False,
+    **kwargs,
 ) -> Union[list, dict, set, deque]:
     return ram_monitor_decorator(plot_graph=graph)(
         cpu_monitor_decorator()(generator)
@@ -25,25 +26,37 @@ def measure_resource_usage(
 
 def benchmark_id_generation(num_ids: int, graph: bool = False) -> None:
     ids_list = measure_resource_usage(
-        generator=generate_ids_in_list, num_ids=num_ids, graph=graph
+        generator=generate_ids_in_list,
+        num_ids=num_ids,
+        graph=graph,
+        func_name="Generate IDs in List",
     )
     memory_object_report(ids_list)
     sleep(1)
 
     ids_deque = measure_resource_usage(
-        generator=generate_ids_in_deque, num_ids=num_ids, graph=graph
+        generator=generate_ids_in_deque,
+        num_ids=num_ids,
+        graph=graph,
+        func_name="Generate IDs in Deque",
     )
     memory_object_report(ids_deque)
     sleep(1)
 
     ids_set = measure_resource_usage(
-        generator=generate_ids_in_set, num_ids=num_ids, graph=graph
+        generator=generate_ids_in_set,
+        num_ids=num_ids,
+        graph=graph,
+        func_name="Generate IDs in Set",
     )
     memory_object_report(ids_set)
     sleep(1)
 
     ids_dict = measure_resource_usage(
-        generator=generate_ids_in_dict, num_ids=num_ids, graph=graph
+        generator=generate_ids_in_dict,
+        num_ids=num_ids,
+        graph=graph,
+        func_name="Generate IDs in Dict",
     )
     memory_object_report(ids_dict)
     sleep(1)
