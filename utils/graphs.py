@@ -29,7 +29,8 @@ def plot_individual_graph_for_cpu(
     plt.xlabel("Time (seconds)")
     plt.ylabel("CPU Usage (%)")
     plt.grid(True)
-    plt.legend()
+    plt.legend(loc="lower right", bbox_to_anchor=(0.5, -0.45), ncol=1)
+    plt.subplots_adjust(bottom=0.3)
 
     text_x = time_points[-1] * 0.7
     text_y = 40
@@ -72,7 +73,10 @@ def plot_combined_graph_for_cpu(
             time_axis,
             avg_cpu_usage,
             marker="o",
-            label=f"{func_name} (Exec Time: {exec_time:.2f}s, Avg CPU: {avg_cpu:.2f}%, Peak CPU: {max_cpu:.2f}%)",
+            label=(
+                f"{func_name} (Exec Time: {exec_time:.2f}s, "
+                f"Avg CPU: {avg_cpu:.2f}%, Peak CPU: {max_cpu:.2f}%)"
+            ),
         )
 
     plt.title("CPU Usage Comparison")
@@ -80,7 +84,8 @@ def plot_combined_graph_for_cpu(
     plt.ylabel("CPU Usage (%)")
     plt.ylim(0, 50)
     plt.grid(True)
-    plt.legend()
+    plt.legend(loc="lower right", bbox_to_anchor=(0.5, -0.45), ncol=1)
+    plt.subplots_adjust(bottom=0.3)
     plt.show()
 
 
@@ -97,7 +102,8 @@ def plot_individual_ram_graph(mem_usage, interval, func_name):
     plt.xlabel("Time (seconds)")
     plt.ylabel("RAM Usage (MB)")
     plt.grid(True)
-    plt.legend(loc="upper left")
+    plt.legend(loc="lower right", bbox_to_anchor=(0.5, -0.45), ncol=1)
+    plt.subplots_adjust(bottom=0.3)
     plt.show()
 
 
@@ -117,5 +123,6 @@ def plot_combined_ram_graph(ram_data: dict) -> None:
     plt.xlabel("Time (seconds)")
     plt.ylabel("RAM Usage (MB)")
     plt.grid(True)
-    plt.legend()
+    plt.legend(loc="lower right", bbox_to_anchor=(0.5, -0.45), ncol=1)
+    plt.subplots_adjust(bottom=0.3)
     plt.show()
