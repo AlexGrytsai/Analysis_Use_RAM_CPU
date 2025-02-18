@@ -28,8 +28,9 @@ def plot_individual_graph_for_cpu(
     plt.title(f"CPU Usage for Function: {func_name}")
     plt.xlabel("Time (seconds)")
     plt.ylabel("CPU Usage (%)")
+    plt.ylim(0, 50)
     plt.grid(True)
-    plt.legend(loc="lower right", bbox_to_anchor=(0.5, -0.45), ncol=1)
+    plt.legend(loc="lower right", bbox_to_anchor=(0.75, -0.45), ncol=1)
     plt.subplots_adjust(bottom=0.3)
 
     text_x = time_points[-1] * 0.7
@@ -84,7 +85,7 @@ def plot_combined_graph_for_cpu(
     plt.ylabel("CPU Usage (%)")
     plt.ylim(0, 50)
     plt.grid(True)
-    plt.legend(loc="lower right", bbox_to_anchor=(0.5, -0.45), ncol=1)
+    plt.legend(loc="lower right", bbox_to_anchor=(0.75, -0.45), ncol=1)
     plt.subplots_adjust(bottom=0.3)
     plt.show()
 
