@@ -1,81 +1,79 @@
 import uuid
 from collections import deque
 from time import sleep
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Union, Type
+
+from redis import Redis
 
 from performance_monitoring.cpu import cpu_monitor_decorator
 from performance_monitoring.memory import memory_object_report
 from performance_monitoring.ram import ram_monitor_decorator
-from utils.get_test_data import get_test_data_from_json
+
+
+def fetch_data_from_redis_for_structure(
+    key_list: List[str],
+    redis_client: Redis,
+    data_structure: Type[Union[list, deque, dict]],
+) -> Union[List[dict[str, Any]], deque[Dict[str, Any]], Dict[str, Any]]:
+    if data_structure is list:
+        return [redis_client.get(key).decode() for key in key_list]
+
+    elif data_structure is deque:
+        return deque(redis_client.get(key).decode() for key in key_list)
+
+    elif data_structure is dict:
+        return {
+            uuid.uuid4().hex: redis_client.get(key).decode()
+            for key in key_list
+        }
+
+    raise ValueError(f"Unsupported data structure: {data_structure}")
 
 
 @ram_monitor_decorator()
 @cpu_monitor_decorator()
-def generate_list_from_json(
-    file_path: str, num_samples: int
+def load_list_from_redis(
+    key_list: List[str],
+    redis_client: Redis,
 ) -> List[dict[str, Any]]:
-    data_list = []
-    for data in get_test_data_from_json(file_path, num_samples):
-        data_list.append(data)
-    return data_list
+    return fetch_data_from_redis_for_structure(key_list, redis_client, list)
 
 
 @ram_monitor_decorator()
 @cpu_monitor_decorator()
-def generate_set_from_json(
-    file_path: str, num_samples: int
-) -> set[Dict[str, Any]] | None:
-    data_set = set()
-    for data in get_test_data_from_json(file_path, num_samples):
-        try:
-            data_set.add(data)
-        except TypeError as exc:
-            print(f"⛔ Set does not support {type(data)}: {exc}")
-            break
-    return data_set if data_set else None
-
-
-@ram_monitor_decorator()
-@cpu_monitor_decorator()
-def generate_deque_from_json(
-    file_path: str, num_samples: int
+def load_deque_from_redis(
+    key_list: List[str],
+    redis_client: Redis,
 ) -> deque[Dict[str, Any]]:
-    data_deque = deque([])
-    for data in get_test_data_from_json(file_path, num_samples):
-        data_deque.append(data)
-    return data_deque
+    return fetch_data_from_redis_for_structure(key_list, redis_client, deque)
 
 
 @ram_monitor_decorator()
 @cpu_monitor_decorator()
-def generate_dict_from_json(
-    file_path: str, num_samples: int
+def load_dict_from_redis(
+    key_list: List[str],
+    redis_client: Redis,
 ) -> Dict[str, Any]:
-    data_dict = {}
-    for data in get_test_data_from_json(file_path, num_samples):
-        data_dict[uuid.uuid4().hex] = data
-    return data_dict
+    return fetch_data_from_redis_for_structure(key_list, redis_client, dict)
 
 
 def benchmark_data_structures(
-    file_path: str,
-    num_samples: int,
+    redis_keys: List[str],
+    redis_client: Redis,
     memory_report: bool = False,
 ) -> None:
-    data_in_list = generate_list_from_json(file_path, num_samples)
-    sleep(1)
+    data_structures = {
+        "List": load_list_from_redis,
+        "Deque": load_deque_from_redis,
+        "Dict": load_dict_from_redis,
+    }
 
-    data_in_deque = generate_deque_from_json(file_path, num_samples)
-    sleep(1)
-
-    data_in_set = generate_set_from_json(file_path, num_samples)
-    sleep(1)
-
-    data_in_dict = generate_dict_from_json(file_path, num_samples)
-    sleep(1)
+    loaded_data = {}
+    for name, func in data_structures.items():
+        loaded_data[name] = func(key_list=redis_keys,
+                                 redis_client=redis_client)
+        sleep(1)
 
     if memory_report:
-        memory_object_report(data_in_list)
-        memory_object_report(data_in_deque)
-        memory_object_report(data_in_set)
-        memory_object_report(data_in_dict)
+        for _, data in loaded_data.items():
+            memory_object_report(data)
