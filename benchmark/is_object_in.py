@@ -13,21 +13,21 @@ from performance_monitoring.ram import ram_monitor_decorator
 
 
 def generate_search_samples(
-    full_list_ids: Union[List[str], Dict[str, str], Set[str], deque],
-    num_of_objects: int,
+    dataset: Union[List[str], Dict[str, str], Set[str], deque],
+    num_samples: int,
 ) -> List[str]:
-    list_of_objects = []
+    search_samples = []
 
-    if isinstance(full_list_ids, dict):
-        full_list_ids = list(full_list_ids.keys())
+    if isinstance(dataset, dict):
+        dataset = list(dataset.keys())
 
-    elif isinstance(full_list_ids, set):
-        full_list_ids = list(full_list_ids)
+    elif isinstance(dataset, set):
+        dataset = list(dataset)
 
-    for _ in range(num_of_objects):
-        list_of_objects.append(random.choice(full_list_ids))
+    for _ in range(num_samples):
+        search_samples.append(random.choice(dataset))
 
-    return list_of_objects
+    return search_samples
 
 
 def benchmark_membership_test(
