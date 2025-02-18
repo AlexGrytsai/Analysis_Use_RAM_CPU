@@ -1,5 +1,6 @@
 import random
 from collections import deque
+from time import sleep
 from typing import Union, List, Dict, Set
 
 from get_ids import (
@@ -29,10 +30,6 @@ def benchmark_membership_test(
     collection: Union[List[str], Dict[str, str], set[str], deque[str]],
     search_samples: List[str],
 ) -> None:
-    print(
-        f"Checking in {type(collection)}. "
-        f"Need to check {len(search_samples)}"
-    )
     for obj in search_samples:
         if obj in collection:
             continue
@@ -44,26 +41,53 @@ def benchmark_membership_test(
 @cpu_monitor_decorator()
 def analyze_membership_performance(
     collection: Union[List[str], Dict[str, str], Set[str], deque],
-    num_searches: int,
+    search_samples: Union[List[str], Dict[str, str], Set[str], deque],
+    **kwargs,
 ) -> None:
     benchmark_membership_test(
         collection=collection,
-        search_samples=generate_search_samples(
-            collection, num_searches
-        ),
+        search_samples=search_samples,
     )
 
 
-def run_membership_benchmark(num_ids: int, num_checks: int) -> None:
+def run_membership_benchmark(num_ids: int, num_searches: int) -> None:
+    list_ids = generate_ids_in_list(num_ids)
+    search_samples_list = generate_search_samples(list_ids, num_searches)
+
+    deque_ids = generate_ids_in_deque(num_ids)
+    search_samples_deque = generate_search_samples(deque_ids, num_searches)
+
+    set_ids = generate_ids_in_set(num_ids)
+    search_samples_set = generate_search_samples(set_ids, num_searches)
+
+    dict_ids = generate_ids_in_dict(num_ids)
+    search_samples_dict = generate_search_samples(dict_ids, num_searches)
+    sleep(2)
+
     analyze_membership_performance(
-        collection=generate_ids_in_list(num_ids), num_searches=num_checks
+        collection=list_ids,
+        search_samples=search_samples_list,
+        func_name="Membership performance analysis for List",
     )
+    sleep(1)
+
     analyze_membership_performance(
-        collection=generate_ids_in_deque(num_ids), num_searches=num_checks
+        collection=deque_ids,
+        search_samples=search_samples_deque,
+        func_name="Membership performance analysis for Deque",
     )
+    sleep(1)
+
     analyze_membership_performance(
-        collection=generate_ids_in_set(num_ids), num_searches=num_checks
+        collection=set_ids,
+        search_samples=search_samples_set,
+        func_name="Membership performance analysis for Set",
     )
+    sleep(1)
+
     analyze_membership_performance(
-        collection=generate_ids_in_dict(num_ids), num_searches=num_checks
+        collection=dict_ids,
+        search_samples=search_samples_dict,
+        func_name="Membership performance analysis for Dict",
     )
+    sleep(1)
