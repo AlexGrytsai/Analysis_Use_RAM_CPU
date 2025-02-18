@@ -47,7 +47,7 @@ def benchmark_membership_test(
 
 @ram_monitor_decorator()
 @cpu_monitor_decorator
-def analyze_check_is_object_in_(
+def analyze_membership_performance(
     list_of_ids: Union[List[str], Dict[str, str], Set[str], deque],
     num_checks: int,
 ) -> None:
@@ -60,15 +60,15 @@ def analyze_check_is_object_in_(
 
 
 def main_analyze_check_is_object_in_(num_ids: int, num_checks: int) -> None:
-    analyze_check_is_object_in_(
+    analyze_membership_performance(
         list_of_ids=generate_ids_in_list(num_ids), num_checks=num_checks
     )
-    analyze_check_is_object_in_(
+    analyze_membership_performance(
         list_of_ids=generate_ids_in_deque(num_ids), num_checks=num_checks
     )
-    analyze_check_is_object_in_(
+    analyze_membership_performance(
         list_of_ids=generate_ids_in_set(num_ids), num_checks=num_checks
     )
-    analyze_check_is_object_in_(
+    analyze_membership_performance(
         list_of_ids=generate_ids_in_dict(num_ids), num_checks=num_checks
     )
