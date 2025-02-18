@@ -41,29 +41,29 @@ def benchmark_membership_test(
 
 
 @ram_monitor_decorator()
-@cpu_monitor_decorator
+@cpu_monitor_decorator()
 def analyze_membership_performance(
-    list_of_ids: Union[List[str], Dict[str, str], Set[str], deque],
-    num_checks: int,
+    collection: Union[List[str], Dict[str, str], Set[str], deque],
+    num_searches: int,
 ) -> None:
     benchmark_membership_test(
-        collection=list_of_ids,
+        collection=collection,
         search_samples=generate_search_samples(
-            list_of_ids, num_checks
+            collection, num_searches
         ),
     )
 
 
 def run_membership_benchmark(num_ids: int, num_checks: int) -> None:
     analyze_membership_performance(
-        list_of_ids=generate_ids_in_list(num_ids), num_checks=num_checks
+        collection=generate_ids_in_list(num_ids), num_searches=num_checks
     )
     analyze_membership_performance(
-        list_of_ids=generate_ids_in_deque(num_ids), num_checks=num_checks
+        collection=generate_ids_in_deque(num_ids), num_searches=num_checks
     )
     analyze_membership_performance(
-        list_of_ids=generate_ids_in_set(num_ids), num_checks=num_checks
+        collection=generate_ids_in_set(num_ids), num_searches=num_checks
     )
     analyze_membership_performance(
-        list_of_ids=generate_ids_in_dict(num_ids), num_checks=num_checks
+        collection=generate_ids_in_dict(num_ids), num_searches=num_checks
     )
