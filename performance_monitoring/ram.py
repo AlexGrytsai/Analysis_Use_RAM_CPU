@@ -21,7 +21,8 @@ def print_ram_usage(
 
 
 def ram_monitor_decorator(
-    interval: float = 0.1, is_detail: bool = False, plot_graph: bool = False
+    interval: float = 0.1, is_detail: bool = False, plot_graph: bool = False,
+    to_console=False,
 ) -> Callable:
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
@@ -44,8 +45,8 @@ def ram_monitor_decorator(
             finally:
                 monitoring = False
                 thread.join()
-
-            print_ram_usage(mem_usage, interval, func.__name__, is_detail)
+            if to_console:
+                print_ram_usage(mem_usage, interval, func.__name__, is_detail)
             if plot_graph:
                 make_graph(mem_usage, interval, func.__name__)
 
