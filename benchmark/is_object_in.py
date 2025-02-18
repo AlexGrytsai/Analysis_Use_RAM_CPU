@@ -59,7 +59,7 @@ def analyze_membership_performance(
     )
 
 
-def main_analyze_check_is_object_in_(num_ids: int, num_checks: int) -> None:
+def run_membership_benchmark(num_ids: int, num_checks: int) -> None:
     analyze_membership_performance(
         list_of_ids=generate_ids_in_list(num_ids), num_checks=num_checks
     )
