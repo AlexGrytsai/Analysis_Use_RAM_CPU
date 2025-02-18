@@ -7,6 +7,7 @@ import psutil
 
 from utils.graphs import make_graph
 
+ram_usage_results = {}
 
 def print_ram_usage(
     mem_usage: list, interval: float, func_name: str, is_detail: bool
@@ -21,19 +22,21 @@ def print_ram_usage(
 
 
 def ram_monitor_decorator(
-    interval: float = 0.1, is_detail: bool = False, plot_graph: bool = False,
+    interval: float = 0.1,
+    is_detail: bool = False,
+    plot_graph: bool = False,
     to_console=False,
 ) -> Callable:
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             process = psutil.Process()
-            mem_usage = []
+            ram_usage = []
 
             def monitor():
                 while monitoring:
                     current_mem = process.memory_info().rss / 1024 / 1024
-                    mem_usage.append(current_mem)
+                    ram_usage.append(current_mem)
                     time.sleep(interval)
 
             monitoring = True
@@ -46,9 +49,13 @@ def ram_monitor_decorator(
                 monitoring = False
                 thread.join()
             if to_console:
-                print_ram_usage(mem_usage, interval, func.__name__, is_detail)
+                print_ram_usage(ram_usage, interval, func.__name__, is_detail)
             if plot_graph:
-                make_graph(mem_usage, interval, func.__name__)
+                make_graph(ram_usage, interval, func.__name__)
+
+            max_ram = max(ram_usage, default=0)
+
+            ram_usage_results[func.__name__] = (max_ram, ram_usage, interval)
 
             return result
 
