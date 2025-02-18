@@ -79,3 +79,23 @@ def plot_individual_ram_graph(mem_usage, interval, func_name):
     plt.grid(True)
     plt.legend()
     plt.show()
+
+
+def plot_combined_ram_graph(ram_data: dict) -> None:
+    plt.figure(figsize=(10, 6))
+
+    for func_name, data in ram_data.items():
+        max_ram, ram_usage, interval = data
+        plt.plot(
+            [i * interval for i in range(len(ram_usage))],
+            ram_usage,
+            marker="o",
+            label=f"{func_name} (Peak RAM: {max_ram:.2f} MB)",
+        )
+
+    plt.title("RAM Usage Comparison")
+    plt.xlabel("Time (seconds)")
+    plt.ylabel("RAM Usage (MB)")
+    plt.grid(True)
+    plt.legend()
+    plt.show()
