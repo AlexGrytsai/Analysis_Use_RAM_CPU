@@ -64,7 +64,7 @@ def plot_combined_graph_for_cpu(cpu_data: dict) -> None:
     plt.show()
 
 
-def make_graph(mem_usage, interval, func_name):
+def plot_individual_ram_graph(mem_usage, interval, func_name):
     plt.figure(figsize=(10, 6))
     plt.plot(
         [i * interval for i in range(len(mem_usage))],
