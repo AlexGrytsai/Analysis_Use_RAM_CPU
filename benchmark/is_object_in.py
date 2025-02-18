@@ -16,30 +16,25 @@ def generate_search_samples(
     dataset: Union[List[str], Dict[str, str], Set[str], deque],
     num_samples: int,
 ) -> List[str]:
-    search_samples = []
-
     if isinstance(dataset, dict):
         dataset = list(dataset.keys())
 
     elif isinstance(dataset, set):
         dataset = list(dataset)
 
-    for _ in range(num_samples):
-        search_samples.append(random.choice(dataset))
-
-    return search_samples
+    return [random.choice(dataset) for _ in range(num_samples)]
 
 
 def benchmark_membership_test(
-    list_of_objects: Union[List[str], Dict[str, str], set[str], deque[str]],
-    list_for_check: List[str],
+    collection: Union[List[str], Dict[str, str], set[str], deque[str]],
+    search_samples: List[str],
 ) -> None:
     print(
-        f"Checking in {type(list_of_objects)}. "
-        f"Need to check {len(list_for_check)}"
+        f"Checking in {type(collection)}. "
+        f"Need to check {len(search_samples)}"
     )
-    for obj in list_for_check:
-        if obj in list_of_objects:
+    for obj in search_samples:
+        if obj in collection:
             continue
         else:
             continue
@@ -52,8 +47,8 @@ def analyze_membership_performance(
     num_checks: int,
 ) -> None:
     benchmark_membership_test(
-        list_of_objects=list_of_ids,
-        list_for_check=generate_search_samples(
+        collection=list_of_ids,
+        search_samples=generate_search_samples(
             list_of_ids, num_checks
         ),
     )
