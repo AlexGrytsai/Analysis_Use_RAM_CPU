@@ -1,5 +1,6 @@
 import uuid
 from collections import deque
+from time import sleep
 from typing import List, Any, Dict
 
 from performance_monitoring.cpu import cpu_monitor_decorator
@@ -56,15 +57,25 @@ def generate_dict_from_json(
     return data_dict
 
 
-def benchmark_data_structures(file_path: str, num_samples: int) -> None:
+def benchmark_data_structures(
+    file_path: str,
+    num_samples: int,
+    memory_report: bool = False,
+) -> None:
     data_in_list = generate_list_from_json(file_path, num_samples)
-    memory_object_report(data_in_list)
+    sleep(1)
 
     data_in_deque = generate_deque_from_json(file_path, num_samples)
-    memory_object_report(data_in_deque)
+    sleep(1)
 
     data_in_set = generate_set_from_json(file_path, num_samples)
-    memory_object_report(data_in_set)
+    sleep(1)
 
     data_in_dict = generate_dict_from_json(file_path, num_samples)
-    memory_object_report(data_in_dict)
+    sleep(1)
+
+    if memory_report:
+        memory_object_report(data_in_list)
+        memory_object_report(data_in_deque)
+        memory_object_report(data_in_set)
+        memory_object_report(data_in_dict)
