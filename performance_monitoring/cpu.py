@@ -1,7 +1,7 @@
 import functools
 import threading
 import time
-from typing import Callable
+from typing import Callable, List
 
 import psutil
 
@@ -22,16 +22,22 @@ def monitor_cpu_usage(interval=0.1):
 def print_cpu_analytics_to_console(
     func_name: str,
     exec_time: float,
-    avg_cpu: float,
-    max_cpu: float,
+    cpu_data: List[float],
 ) -> None:
+    avg_cpu = sum(cpu_data) / len(cpu_data) if cpu_data else 0
+    max_cpu = max(cpu_data, default=0)
+
     print(f"\n📊 CPU Usage Report for '{func_name}':")
     print(f"  🕒 Execution time: {exec_time:.4f} seconds")
     print(f"  ⚡ Average CPU Load: {avg_cpu:.2f}%")
     print(f"  🚀 Peak CPU Load: {max_cpu:.2f}%\n")
 
 
-def cpu_monitor_decorator(plot_graph=False, to_console=False) -> Callable:
+def cpu_monitor_decorator(
+    plot_graph=False,
+    to_console=False,
+    save_data=True,
+) -> Callable:
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -49,33 +55,23 @@ def cpu_monitor_decorator(plot_graph=False, to_console=False) -> Callable:
             running = False
             cpu_thread.join()
 
-            avg_cpu = (
-                sum(cpu_usage_data) / len(cpu_usage_data)
-                if cpu_usage_data
-                else 0
-            )
-            max_cpu = max(cpu_usage_data, default=0)
-            exec_time = end_time - start_time
-
             if to_console:
                 print_cpu_analytics_to_console(
-                    func.__name__, exec_time, avg_cpu, max_cpu
+                    func_name=func.__name__,
+                    exec_time=(end_time - start_time),
+                    cpu_data=cpu_usage_data,
                 )
 
-            cpu_usage_results[func.__name__] = (
-                exec_time,
-                avg_cpu,
-                max_cpu,
-                cpu_usage_data[:],
-            )
+            if save_data:
+                if func.__name__ not in cpu_usage_results:
+                    cpu_usage_results[func.__name__] = []
+                cpu_usage_results[func.__name__].append(cpu_usage_data[:])
 
             if plot_graph:
                 plot_individual_graph_for_cpu(
                     cpu_usage=cpu_usage_data,
                     func_name=func.__name__,
-                    exec_time=exec_time,
-                    avg_cpu=avg_cpu,
-                    max_cpu=max_cpu,
+                    exec_time=(end_time - start_time),
                 )
 
             return result
