@@ -67,27 +67,27 @@ def run_membership_benchmark(num_ids: int, num_searches: int) -> None:
     analyze_membership_performance(
         collection=list_ids,
         search_samples=search_samples_list,
-        func_name="Membership performance analysis for List",
+        func_name="Membership performance for List",
     )
     sleep(1)
 
     analyze_membership_performance(
         collection=deque_ids,
         search_samples=search_samples_deque,
-        func_name="Membership performance analysis for Deque",
+        func_name="Membership performance for Deque",
     )
     sleep(1)
 
     analyze_membership_performance(
         collection=set_ids,
         search_samples=search_samples_set,
-        func_name="Membership performance analysis for Set",
+        func_name="Membership performance for Set",
     )
     sleep(1)
 
     analyze_membership_performance(
         collection=dict_ids,
         search_samples=search_samples_dict,
-        func_name="Membership performance analysis for Dict",
+        func_name="Membership performance for Dict",
     )
     sleep(1)
