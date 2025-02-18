@@ -30,7 +30,7 @@ def plot_individual_graph_for_cpu(
     plt.ylabel("CPU Usage (%)")
     plt.ylim(0, 50)
     plt.grid(True)
-    plt.legend(loc="lower right", bbox_to_anchor=(0.75, -0.45), ncol=1)
+    plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
     plt.subplots_adjust(bottom=0.3)
 
     text_x = time_points[-1] * 0.7
@@ -85,7 +85,7 @@ def plot_combined_graph_for_cpu(
     plt.ylabel("CPU Usage (%)")
     plt.ylim(0, 50)
     plt.grid(True)
-    plt.legend(loc="lower right", bbox_to_anchor=(0.75, -0.45), ncol=1)
+    plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
     plt.subplots_adjust(bottom=0.3)
     plt.show()
 
@@ -103,7 +103,7 @@ def plot_individual_ram_graph(mem_usage, interval, func_name):
     plt.xlabel("Time (seconds)")
     plt.ylabel("RAM Usage (MB)")
     plt.grid(True)
-    plt.legend(loc="lower right", bbox_to_anchor=(0.5, -0.45), ncol=1)
+    plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
     plt.subplots_adjust(bottom=0.3)
     plt.show()
 
@@ -124,6 +124,6 @@ def plot_combined_ram_graph(ram_data: dict) -> None:
     plt.xlabel("Time (seconds)")
     plt.ylabel("RAM Usage (MB)")
     plt.grid(True)
-    plt.legend(loc="lower right", bbox_to_anchor=(0.5, -0.45), ncol=1)
+    plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
     plt.subplots_adjust(bottom=0.3)
     plt.show()
