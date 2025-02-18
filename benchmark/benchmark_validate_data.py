@@ -1,9 +1,13 @@
 from collections import deque
 from typing import List, Any, Dict
 
+from performance_monitoring.cpu import cpu_monitor_decorator
+from performance_monitoring.ram import ram_monitor_decorator
 from utils.validators import TenderDataValidator
 
 
+@ram_monitor_decorator()
+@cpu_monitor_decorator()
 def validate_data_from_list(
     raw_data_list: List[Dict[str, Any]],
 ) -> List[TenderDataValidator]:
@@ -14,6 +18,8 @@ def validate_data_from_list(
     return clean_data
 
 
+@ram_monitor_decorator()
+@cpu_monitor_decorator()
 def validate_data_from_deque(
     raw_data_deque: deque,
 ) -> deque[TenderDataValidator]:
@@ -24,6 +30,8 @@ def validate_data_from_deque(
     return clean_data
 
 
+@ram_monitor_decorator()
+@cpu_monitor_decorator()
 def validate_data_from_dict(
     raw_data_dict: Dict[str, Any],
 ) -> Dict[str, TenderDataValidator]:
