@@ -14,6 +14,7 @@ def fetch_data_from_redis_for_structure(
     key_list: List[str],
     redis_client: Redis,
     data_structure: Type[Union[list, deque, dict, set]],
+    **kwargs,
 ) -> Union[
     List[dict[str, Any]], deque[Dict[str, Any]], Dict[str, Any], Set[bytes]
 ]:
@@ -40,6 +41,7 @@ def fetch_data_from_redis_for_structure(
 def load_list_from_redis(
     key_list: List[str],
     redis_client: Redis,
+    **kwargs,
 ) -> List[dict[str, Any]]:
     return fetch_data_from_redis_for_structure(key_list, redis_client, list)
 
@@ -49,6 +51,7 @@ def load_list_from_redis(
 def load_deque_from_redis(
     key_list: List[str],
     redis_client: Redis,
+    **kwargs,
 ) -> deque[Dict[str, Any]]:
     return fetch_data_from_redis_for_structure(key_list, redis_client, deque)
 
@@ -58,6 +61,7 @@ def load_deque_from_redis(
 def load_dict_from_redis(
     key_list: List[str],
     redis_client: Redis,
+    **kwargs,
 ) -> Dict[str, Any]:
     return fetch_data_from_redis_for_structure(key_list, redis_client, dict)
 
@@ -67,6 +71,7 @@ def load_dict_from_redis(
 def load_set_from_redis(
     key_list: List[str],
     redis_client: Redis,
+    **kwargs,
 ) -> Set[bytes]:
     return fetch_data_from_redis_for_structure(key_list, redis_client, set)
 
@@ -86,7 +91,9 @@ def benchmark_data_structures(
     loaded_data = {}
     for name, func in data_structures.items():
         loaded_data[name] = func(
-            key_list=redis_keys, redis_client=redis_client
+            key_list=redis_keys,
+            redis_client=redis_client,
+            func_name=f"Load data to {name}",
         )
         sleep(1)
 
