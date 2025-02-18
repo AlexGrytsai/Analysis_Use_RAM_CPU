@@ -10,10 +10,9 @@ from get_ids import (
 )
 from performance_monitoring.cpu import cpu_monitor_decorator
 from performance_monitoring.ram import ram_monitor_decorator
-from performance_monitoring.timer import timer_of_execution
 
 
-def generation_list_of_objects_for_search(
+def generate_search_samples(
     full_list_ids: Union[List[str], Dict[str, str], Set[str], deque],
     num_of_objects: int,
 ) -> List[str]:
@@ -54,7 +53,7 @@ def analyze_check_is_object_in_(
 ) -> None:
     check_entry_object_in_list(
         list_of_objects=list_of_ids,
-        list_for_check=generation_list_of_objects_for_search(
+        list_for_check=generate_search_samples(
             list_of_ids, num_checks
         ),
     )
