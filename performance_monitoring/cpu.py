@@ -60,21 +60,22 @@ def cpu_monitor_decorator(
 
             running = False
             cpu_thread.join()
-
             if to_console:
                 print_cpu_analytics_to_console(
-                    func_name=func.__name__,
+                    func_name=kwargs.get("func_name", func.__name__),
                     exec_time=(end_time - start_time),
                     cpu_data=cpu_usage_data,
                 )
 
             if save_data:
-                save_data_to_usage_results(func.__name__, cpu_usage_data)
+                save_data_to_usage_results(
+                    kwargs.get("func_name", func.__name__), cpu_usage_data
+                )
 
             if plot_graph:
                 plot_individual_graph_for_cpu(
                     cpu_usage=cpu_usage_data,
-                    func_name=func.__name__,
+                    func_name=kwargs.get("func_name", func.__name__),
                     exec_time=(end_time - start_time),
                 )
 

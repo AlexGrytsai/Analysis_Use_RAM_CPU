@@ -50,11 +50,18 @@ def ram_monitor_decorator(
                 monitoring = False
                 thread.join()
             if to_console:
-                print_ram_usage(ram_usage, interval, func.__name__, is_detail)
+                print_ram_usage(
+                    ram_usage,
+                    interval,
+                    kwargs.get("func_name", func.__name__),
+                    is_detail,
+                )
             if plot_graph:
-                plot_individual_ram_graph(ram_usage, interval, func.__name__)
+                plot_individual_ram_graph(
+                    ram_usage, interval, kwargs.get("func_name", func.__name__)
+                )
 
-            ram_usage_results[func.__name__] = (
+            ram_usage_results[kwargs.get("func_name", func.__name__)] = (
                 max(ram_usage, default=0),
                 ram_usage,
                 interval,
