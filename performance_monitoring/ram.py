@@ -5,9 +5,10 @@ from typing import Callable
 
 import psutil
 
-from utils.graphs import make_graph, plot_individual_ram_graph
+from utils.graphs import plot_individual_ram_graph
 
 ram_usage_results = {}
+
 
 def print_ram_usage(
     mem_usage: list, interval: float, func_name: str, is_detail: bool
@@ -53,9 +54,11 @@ def ram_monitor_decorator(
             if plot_graph:
                 plot_individual_ram_graph(ram_usage, interval, func.__name__)
 
-            max_ram = max(ram_usage, default=0)
-
-            ram_usage_results[func.__name__] = (max_ram, ram_usage, interval)
+            ram_usage_results[func.__name__] = (
+                max(ram_usage, default=0),
+                ram_usage,
+                interval,
+            )
 
             return result
 
