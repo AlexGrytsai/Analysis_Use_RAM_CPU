@@ -1,5 +1,5 @@
 from collections import deque
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Set
 
 from performance_monitoring.cpu import cpu_monitor_decorator
 from performance_monitoring.ram import ram_monitor_decorator
@@ -39,4 +39,16 @@ def validate_data_from_dict(
     for key, value in raw_data_dict.items():
         validate_date = TenderDataValidator(**value)
         clean_data[key] = validate_date
+    return clean_data
+
+
+@ram_monitor_decorator()
+@cpu_monitor_decorator()
+def validate_data_from_set(
+    raw_data_set: Set,
+) -> Set[str]:
+    clean_data = set()
+    for value in raw_data_set:
+        validate_date = TenderDataValidator(**value.decode())
+        clean_data.add(validate_date.model_dump_json())
     return clean_data
