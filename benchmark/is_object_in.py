@@ -30,7 +30,7 @@ def generate_search_samples(
     return list_of_objects
 
 
-def check_entry_object_in_list(
+def benchmark_membership_test(
     list_of_objects: Union[List[str], Dict[str, str], set[str], deque[str]],
     list_for_check: List[str],
 ) -> None:
@@ -51,7 +51,7 @@ def analyze_check_is_object_in_(
     list_of_ids: Union[List[str], Dict[str, str], Set[str], deque],
     num_checks: int,
 ) -> None:
-    check_entry_object_in_list(
+    benchmark_membership_test(
         list_of_objects=list_of_ids,
         list_for_check=generate_search_samples(
             list_of_ids, num_checks
