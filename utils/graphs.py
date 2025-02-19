@@ -83,7 +83,7 @@ def plot_combined_graph_for_cpu(
     plt.title("CPU Usage Comparison")
     plt.xlabel("Time (seconds)")
     plt.ylabel("CPU Usage (%)")
-    plt.ylim(0, 50)
+    plt.ylim(0, 100)
     plt.grid(True)
     plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
     plt.subplots_adjust(bottom=0.3)
@@ -108,7 +108,7 @@ def plot_individual_ram_graph(mem_usage, interval, func_name):
     plt.show()
 
 
-def plot_combined_ram_graph(ram_data: dict) -> None:
+def plot_combined_ram_graph(ram_data: dict, y_limit: int = None) -> None:
     plt.figure(figsize=(10, 6))
 
     for func_name, data in ram_data.items():
@@ -123,6 +123,8 @@ def plot_combined_ram_graph(ram_data: dict) -> None:
     plt.title("RAM Usage Comparison")
     plt.xlabel("Time (seconds)")
     plt.ylabel("RAM Usage (MB)")
+    if y_limit:
+        plt.ylim(0, y_limit)
     plt.grid(True)
     plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
     plt.subplots_adjust(bottom=0.3)
