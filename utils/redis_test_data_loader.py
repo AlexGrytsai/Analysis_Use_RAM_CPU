@@ -1,6 +1,6 @@
 import json
 import uuid
-from typing import Any, Generator, Tuple
+from typing import Any, Generator, Tuple, List
 
 from redis import Redis
 
@@ -37,11 +37,14 @@ def add_data_to_redis(
     redis_client: Redis,
     num_of_objects: int,
     file_path: str,
-) -> None:
+) -> List[str]:
+    list_key_with_data = []
     for data, key in get_test_data_from_json(
         file_path=file_path, num_of_objects=num_of_objects
     ):
         redis_client.set(key, json.dumps(data, ensure_ascii=False))
+        list_key_with_data.append(key)
+    return list_key_with_data
 
 
 def add_empty_keys_to_redis(redis_client: Redis, num_of_keys: int) -> None:
@@ -54,11 +57,11 @@ def prepare_data_for_benchmark(
     total_keys: int,
     num_keys_with_data: int,
     file_path: str,
-) -> None:
+) -> List[str]:
     add_empty_keys_to_redis(
         redis_client=redis_client, num_of_keys=total_keys - num_keys_with_data
     )
-    add_data_to_redis(
+    return add_data_to_redis(
         redis_client=redis_client,
         num_of_objects=num_keys_with_data,
         file_path=file_path,
