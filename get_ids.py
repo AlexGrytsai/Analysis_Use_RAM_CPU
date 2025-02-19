@@ -1,5 +1,5 @@
 from collections import deque
-from typing import List, Dict, Generator, Any, Iterator
+from typing import List, Dict, Generator, Any, Iterator, Set
 
 from utils.uuid_generator import generate_uuids
 
@@ -15,10 +15,10 @@ def generate_ids_in_list(
 
 def generate_ids_in_set(
     redis_iterator: Iterator[bytes],
-) -> set[bytes]:
+) -> Set[str]:
     ids_set = set()
     for uid in redis_iterator:
-        ids_set.add(uid)
+        ids_set.add(uid.decode())
     return ids_set
 
 
