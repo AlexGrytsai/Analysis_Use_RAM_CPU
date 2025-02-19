@@ -1,13 +1,13 @@
 import json
 import uuid
-from typing import Any, Generator
+from typing import Any, Generator, Tuple
 
 from redis import Redis
 
 
 def get_test_data_from_json(
     file_path: str, num_of_objects: int
-) -> Generator[dict, Any, None]:
+) -> Generator[Tuple[Any, str], Any, None]:
     with open(file_path, "r", encoding="utf-8") as file:
         data = json.load(file)
         counter = 0
@@ -16,7 +16,9 @@ def get_test_data_from_json(
                 counter += 1
                 if counter > num_of_objects:
                     break
-                yield obj
+                key = uuid.uuid4().hex
+                obj["data"]["tenderID"] = key
+                yield obj, key
 
 
 def add_data_to_redis(
@@ -24,9 +26,9 @@ def add_data_to_redis(
     num_of_objects: int,
     file_path: str,
 ) -> None:
-    for data in get_test_data_from_json(
+    for data, key in get_test_data_from_json(
         file_path=file_path, num_of_objects=num_of_objects
     ):
         redis_client.set(
-            uuid.uuid4().hex, json.dumps(data, ensure_ascii=False)
+            key, json.dumps(data, ensure_ascii=False)
         )
