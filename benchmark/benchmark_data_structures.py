@@ -77,6 +77,12 @@ def benchmark_data_structures(
             memory_object_report(data)
 
 
+def get_value_from_redis(key: str) -> Dict[str, Any]:
+    return fetch_data_from_redis_for_structure(
+        key_list=[key], data_structure=list
+    )[0]
+
+
 def main_benchmark_add_data(
     list_keys: List[str],
     repeat: int = 10,
@@ -88,4 +94,4 @@ def main_benchmark_add_data(
         )
 
     plot_combined_graph_for_cpu(cpu_data=cpu_usage_results)
-    plot_combined_ram_graph(ram_data=ram_usage_results)
+    plot_combined_ram_graph(ram_data=ram_usage_results, y_limit=2100)
