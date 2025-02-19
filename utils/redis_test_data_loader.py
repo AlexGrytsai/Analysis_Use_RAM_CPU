@@ -1,6 +1,17 @@
 import json
 import uuid
-from typing import Any, Generator, Tuple, List, Iterator
+from collections import deque
+from typing import (
+    Any,
+    Generator,
+    Tuple,
+    List,
+    Iterator,
+    Type,
+    Union,
+    Dict,
+    Set,
+)
 
 import redis
 from redis import Redis
@@ -48,9 +59,9 @@ def clean_redis_database(r_client: Redis = redis_client) -> None:
 
 
 def add_data_to_redis(
-    r_client: Redis,
     num_of_objects: int,
     file_path: str,
+    r_client: Redis = redis_client,
 ) -> List[str]:
     list_key_with_data = []
     for data, key in get_test_data_from_json(
@@ -61,9 +72,40 @@ def add_data_to_redis(
     return list_key_with_data
 
 
-def add_empty_keys_to_redis(r_client: Redis, num_of_keys: int) -> None:
+def add_empty_keys_to_redis(
+    num_of_keys: int,
+    r_client: Redis = redis_client,
+) -> None:
     for key in generate_uuid_keys_for_redis(num_of_keys=num_of_keys):
         r_client.set(key, "")
+
+
+def fetch_data_from_redis_for_structure(
+    key_list: List[str],
+    data_structure: Type[Union[list, deque, dict, set]],
+    r_client: Redis = redis_client,
+    **kwargs,
+) -> Union[
+    List[dict[str, Any]], deque[Dict[str, Any]], Dict[str, Any], Set[bytes]
+]:
+    if data_structure is list:
+        return [json.loads(r_client.get(key).decode()) for key in key_list]
+
+    elif data_structure is deque:
+        return deque(
+            json.loads(r_client.get(key).decode()) for key in key_list
+        )
+
+    elif data_structure is set:
+        return {r_client.get(key) for key in key_list}
+
+    elif data_structure is dict:
+        return {
+            uuid.uuid4().hex: json.loads(r_client.get(key).decode())
+            for key in key_list
+        }
+
+    raise ValueError(f"Unsupported data structure: {data_structure}")
 
 
 def prepare_data_for_benchmark(
