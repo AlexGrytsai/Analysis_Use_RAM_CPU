@@ -107,4 +107,4 @@ def main_benchmark_validate_data(
         benchmark_validate_data(redis_keys=list_keys, memory_report=False)
 
     plot_combined_graph_for_cpu(cpu_data=cpu_usage_results)
-    plot_combined_ram_graph(ram_data=ram_usage_results)
+    plot_combined_ram_graph(ram_data=ram_usage_results, y_limit=1200)
