@@ -2,7 +2,7 @@ from collections import deque
 from time import sleep
 from typing import Union, List, Dict, Set, Iterator
 
-from get_ids import (
+from utils.get_ids import (
     generate_ids_in_list,
     generate_ids_in_set,
     generate_ids_in_deque,
