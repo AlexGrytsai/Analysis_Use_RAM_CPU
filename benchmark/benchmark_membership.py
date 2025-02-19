@@ -8,8 +8,10 @@ from get_ids import (
     generate_ids_in_deque,
     generate_ids_in_dict,
 )
-from performance_monitoring.cpu import cpu_monitor_decorator
-from performance_monitoring.ram import ram_monitor_decorator
+from performance_monitoring.cpu import cpu_monitor_decorator, cpu_usage_results
+from performance_monitoring.ram import ram_monitor_decorator, ram_usage_results
+from utils.graphs import plot_combined_graph_for_cpu, plot_combined_ram_graph
+from utils.redis_test_data_loader import create_list_iterator_from_redis_keys
 
 
 def benchmark_membership_test(
@@ -74,3 +76,14 @@ def run_membership_benchmark(
         func_name="Membership performance for Dict",
     )
     sleep(1)
+
+
+def main_benchmark_membership(list_keys: List[str], repeat: int = 10) -> None:
+    for _ in range(repeat):
+        run_membership_benchmark(
+            list_keys_with_data=list_keys,
+            list_iterator=create_list_iterator_from_redis_keys(),
+        )
+
+    plot_combined_graph_for_cpu(cpu_data=cpu_usage_results)
+    plot_combined_ram_graph(ram_data=ram_usage_results)
