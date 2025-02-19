@@ -26,14 +26,14 @@ def main(
     )
     match command:
         case "gener":
-            main_benchmark_ids_generation(repeat=1)
+            main_benchmark_ids_generation(repeat=10)
         case "mem":
-            main_benchmark_membership(list_keys=list_keys_with_data, repeat=1)
+            main_benchmark_membership(list_keys=list_keys_with_data, repeat=10)
         case "add":
-            main_benchmark_add_data(list_keys=list_keys_with_data, repeat=1)
+            main_benchmark_add_data(list_keys=list_keys_with_data, repeat=10)
         case "val":
             main_benchmark_validate_data(
-                list_keys=list_keys_with_data, repeat=1
+                list_keys=list_keys_with_data, repeat=10
             )
 
     clean_redis_database()
