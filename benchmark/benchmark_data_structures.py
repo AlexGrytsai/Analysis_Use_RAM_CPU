@@ -1,3 +1,4 @@
+import json
 import uuid
 from collections import deque
 from time import sleep
@@ -19,17 +20,19 @@ def fetch_data_from_redis_for_structure(
     List[dict[str, Any]], deque[Dict[str, Any]], Dict[str, Any], Set[bytes]
 ]:
     if data_structure is list:
-        return [redis_client.get(key).decode() for key in key_list]
+        return [json.loads(redis_client.get(key).decode()) for key in key_list]
 
     elif data_structure is deque:
-        return deque(redis_client.get(key).decode() for key in key_list)
+        return deque(
+            json.loads(redis_client.get(key).decode()) for key in key_list
+        )
 
     elif data_structure is set:
         return {redis_client.get(key) for key in key_list}
 
     elif data_structure is dict:
         return {
-            uuid.uuid4().hex: redis_client.get(key).decode()
+            uuid.uuid4().hex: json.loads(redis_client.get(key).decode())
             for key in key_list
         }
 
