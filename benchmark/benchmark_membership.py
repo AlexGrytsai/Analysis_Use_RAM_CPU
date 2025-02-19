@@ -1,7 +1,7 @@
 import random
 from collections import deque
 from time import sleep
-from typing import Union, List, Dict, Set
+from typing import Union, List, Dict, Set, Iterator
 
 from get_ids import (
     generate_ids_in_list,
@@ -28,9 +28,9 @@ def generate_search_samples(
 
 def benchmark_membership_test(
     collection: Union[List[str], Dict[str, str], set[str], deque[str]],
-    search_samples: List[str],
+    list_keys_with_data: List[str],
 ) -> None:
-    for obj in search_samples:
+    for obj in list_keys_with_data:
         if obj in collection:
             continue
         else:
@@ -40,54 +40,51 @@ def benchmark_membership_test(
 @ram_monitor_decorator()
 @cpu_monitor_decorator()
 def analyze_membership_performance(
-    collection: Union[List[str], Dict[str, str], Set[str], deque],
-    search_samples: Union[List[str], Dict[str, str], Set[str], deque],
+    collection: Union[List[str], Dict[str, None], Set[str], deque],
+    list_keys_with_data: List[str],
     **kwargs,
 ) -> None:
     benchmark_membership_test(
         collection=collection,
-        search_samples=search_samples,
+        list_keys_with_data=list_keys_with_data,
     )
 
 
-def run_membership_benchmark(num_ids: int, num_searches: int) -> None:
-    list_ids = generate_ids_in_list(num_ids)
-    search_samples_list = generate_search_samples(list_ids, num_searches)
+def run_membership_benchmark(
+    list_iterator: List[Iterator[bytes]], list_keys_with_data: List[str]
+) -> None:
+    iter_1, iter_2, iter_3, iter_4 = list_iterator
 
-    deque_ids = generate_ids_in_deque(num_ids)
-    search_samples_deque = generate_search_samples(deque_ids, num_searches)
-
-    set_ids = generate_ids_in_set(num_ids)
-    search_samples_set = generate_search_samples(set_ids, num_searches)
-
-    dict_ids = generate_ids_in_dict(num_ids)
-    search_samples_dict = generate_search_samples(dict_ids, num_searches)
+    list_ids = generate_ids_in_list(iter_1)
+    deque_ids = generate_ids_in_deque(iter_2)
+    set_ids = generate_ids_in_set(iter_3)
+    dict_ids = generate_ids_in_dict(iter_4)
     sleep(2)
 
     analyze_membership_performance(
         collection=list_ids,
-        search_samples=search_samples_list,
+        list_keys_with_data=list_keys_with_data,
         func_name="Membership performance for List",
     )
     sleep(1)
 
     analyze_membership_performance(
         collection=deque_ids,
-        search_samples=search_samples_deque,
+        list_keys_with_data=list_keys_with_data,
         func_name="Membership performance for Deque",
     )
     sleep(1)
 
     analyze_membership_performance(
         collection=set_ids,
-        search_samples=search_samples_set,
+        list_keys_with_data=list_keys_with_data,
         func_name="Membership performance for Set",
     )
     sleep(1)
 
     analyze_membership_performance(
         collection=dict_ids,
-        search_samples=search_samples_dict,
+        list_keys_with_data=list_keys_with_data,
         func_name="Membership performance for Dict",
     )
     sleep(1)
