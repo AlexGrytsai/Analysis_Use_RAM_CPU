@@ -1,4 +1,3 @@
-import random
 from collections import deque
 from time import sleep
 from typing import Union, List, Dict, Set, Iterator
@@ -11,19 +10,6 @@ from get_ids import (
 )
 from performance_monitoring.cpu import cpu_monitor_decorator
 from performance_monitoring.ram import ram_monitor_decorator
-
-
-def generate_search_samples(
-    dataset: Union[List[str], Dict[str, str], Set[str], deque],
-    num_samples: int,
-) -> List[str]:
-    if isinstance(dataset, dict):
-        dataset = list(dataset.keys())
-
-    elif isinstance(dataset, set):
-        dataset = list(dataset)
-
-    return [random.choice(dataset) for _ in range(num_samples)]
 
 
 def benchmark_membership_test(
