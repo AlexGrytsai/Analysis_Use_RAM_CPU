@@ -70,7 +70,7 @@ def main_benchmark_ids_generation(repeat: int = 10) -> None:
     for _ in range(repeat):
         benchmark_id_generation(
             list_iterator=create_list_iterator_from_redis_keys(),
-            memory_report=True,
+            memory_report=False,
         )
 
     plot_combined_graph_for_cpu(cpu_data=cpu_usage_results)

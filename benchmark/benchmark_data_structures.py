@@ -84,7 +84,7 @@ def main_benchmark_add_data(
     for _ in range(repeat):
         benchmark_data_structures(
             redis_keys=list_keys,
-            memory_report=True,
+            memory_report=False,
         )
 
     plot_combined_graph_for_cpu(cpu_data=cpu_usage_results)
