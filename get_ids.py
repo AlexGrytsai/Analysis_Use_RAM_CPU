@@ -1,7 +1,5 @@
 from collections import deque
-from typing import List, Dict, Generator, Any, Iterator, Set
-
-from utils.uuid_generator import generate_uuids
+from typing import List, Dict, Iterator, Set
 
 
 def generate_ids_in_list(
