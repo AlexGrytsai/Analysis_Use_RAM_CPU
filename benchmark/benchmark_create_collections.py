@@ -74,4 +74,4 @@ def main_benchmark_ids_generation(repeat: int = 10) -> None:
         )
 
     plot_combined_graph_for_cpu(cpu_data=cpu_usage_results)
-    plot_combined_ram_graph(ram_data=ram_usage_results)
+    plot_combined_ram_graph(ram_data=ram_usage_results, y_limit=200)
