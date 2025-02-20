@@ -67,7 +67,7 @@ def plot_combined_graph_for_cpu(
         time_axis = [i * 0.1 for i in range(max_length)]
 
         exec_time = max_length * 0.1
-        avg_cpu = np.mean(avg_cpu_usage)
+        median_cpu = np.median(avg_cpu_usage)
         max_cpu = np.max(avg_cpu_usage)
 
         plt.plot(
@@ -76,7 +76,7 @@ def plot_combined_graph_for_cpu(
             marker="o",
             label=(
                 f"{func_name} (Exec Time: {exec_time:.2f}s, "
-                f"Avg CPU: {avg_cpu:.2f}%, Peak CPU: {max_cpu:.2f}%)"
+                f"Median: {median_cpu:.2f}%, Peak: {max_cpu:.2f}%)"
             ),
         )
 
@@ -84,6 +84,7 @@ def plot_combined_graph_for_cpu(
     plt.xlabel("Time (seconds)")
     plt.ylabel("CPU Usage (%)")
     plt.ylim(0, 100)
+    plt.yticks(np.linspace(0, 100, 10))
     plt.grid(True)
     plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
     plt.subplots_adjust(bottom=0.3)
@@ -108,23 +109,39 @@ def plot_individual_ram_graph(mem_usage, interval, func_name):
     plt.show()
 
 
-def plot_combined_ram_graph(ram_data: dict, y_limit: int = None) -> None:
+def plot_combined_ram_graph(
+    ram_data: dict,
+    y_limit: int = None,
+    detailing: int = None,
+) -> None:
     plt.figure(figsize=(10, 6))
 
-    for func_name, data in ram_data.items():
-        max_ram, ram_usage, interval = data
+    y_limit = y_limit or 1.1 * max(
+        max(data, default=0) for data in ram_data.values()
+    )
+    detailing = detailing or 10
+
+    for func_name, runs in ram_data.items():
+        avg_runs = [np.mean(run) for run in runs]
+        max_length = max(map(len, runs), default=0)
+        median_runs = [np.median(run) for run in runs]
+        avg_ram_usage = [
+            np.mean([run[i] for run in runs if i < len(run)])
+            for i in range(max_length)
+        ]
+
         plt.plot(
-            [i * interval for i in range(len(ram_usage))],
-            ram_usage,
+            [i * 0.1 for i in range(len(avg_ram_usage))],
+            avg_ram_usage,
             marker="o",
-            label=f"{func_name} (Peak RAM: {max_ram:.2f} MB)",
+            label=f"{func_name} (Avg Peak: {np.mean(avg_runs):.2f} MB, Median: {np.mean(median_runs):.2f} MB)",
         )
 
     plt.title("RAM Usage Comparison")
     plt.xlabel("Time (seconds)")
     plt.ylabel("RAM Usage (MB)")
-    if y_limit:
-        plt.ylim(0, y_limit)
+    plt.ylim(0, y_limit)
+    plt.yticks(np.linspace(0, y_limit, detailing))
     plt.grid(True)
     plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
     plt.subplots_adjust(bottom=0.3)
