@@ -32,8 +32,9 @@ def print_cpu_analytics_to_console(
     print(f"  🚀 Peak CPU Load: {max_cpu:.2f}%\n")
 
 
-def save_data_to_usage_results(func_name: str,
-                               cpu_data: Tuple[List[float], float]) -> None:
+def save_data_to_usage_results(
+    func_name: str, cpu_data: Tuple[List[float], float]
+) -> None:
     if func_name not in cpu_usage_results:
         cpu_usage_results[func_name] = []
     cpu_usage_results[func_name].append(cpu_data)
@@ -73,7 +74,7 @@ def cpu_monitor_decorator(
             if save_data:
                 save_data_to_usage_results(
                     kwargs.get("func_name", func.__name__),
-                    (cpu_usage_data, end_time - start_time)
+                    (cpu_usage_data, end_time - start_time),
                 )
 
             if plot_graph:

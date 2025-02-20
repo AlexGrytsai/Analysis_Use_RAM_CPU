@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -49,7 +49,7 @@ def plot_individual_graph_for_cpu(
 
 
 def plot_combined_graph_for_cpu(
-    cpu_data: Dict[str, List[List[float]]],
+    cpu_data: Dict[str, List[Tuple[List[float], float]]],
 ) -> None:
     plt.figure(figsize=(10, 6))
 
@@ -57,27 +57,31 @@ def plot_combined_graph_for_cpu(
         if not runs:
             continue
 
-        median_runs = [np.median(run) for run in runs]
-        max_length = max(map(len, runs), default=0)
+        all_cpu_usages = [run[0] for run in runs]
+        exec_times = [run[1] for run in runs]
 
+        max_length = max(map(len, all_cpu_usages), default=0)
         if max_length == 0:
             continue
 
         avg_cpu_usage = [
-            np.mean([run[i] for run in runs if i < len(run)])
+            np.mean([run[i] for run in all_cpu_usages if i < len(run)])
             for i in range(max_length)
         ]
 
-        exec_time = max_length * 0.1
+        avg_exec_time = np.mean(exec_times)
+        x_values = np.linspace(0, avg_exec_time, len(avg_cpu_usage))
+
+        median_cpu = np.median([np.median(run) for run in all_cpu_usages])
         max_cpu = np.max(avg_cpu_usage) if avg_cpu_usage else 0
 
         plt.plot(
-            [i * 0.1 for i in range(len(avg_cpu_usage))],
+            x_values,
             avg_cpu_usage,
             marker="o",
             label=(
-                f"{func_name} (Exec Time: {exec_time:.2f}s, "
-                f"Median: {np.median(median_runs):.2f}%, Peak: {max_cpu:.2f}%)"
+                f"{func_name} (Exec Time: {avg_exec_time:.2f}s, "
+                f"Median: {median_cpu:.2f}%, Peak: {max_cpu:.2f}%)"
             ),
         )
 
@@ -85,7 +89,7 @@ def plot_combined_graph_for_cpu(
     plt.xlabel("Time (seconds)")
     plt.ylabel("CPU Usage (%)")
     plt.ylim(0, 100)
-    plt.yticks(np.linspace(0, 100, 10))
+    plt.yticks(np.linspace(0, 100, 20))
     plt.grid(True)
     plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
     plt.subplots_adjust(bottom=0.3)
@@ -137,7 +141,8 @@ def plot_combined_ram_graph(
             avg_ram_usage,
             marker="o",
             label=(
-                f"{func_name} (Avg Peak: {np.mean(avg_runs):.2f} MB, "
+                f"{func_name} (Avg: {np.mean(avg_runs):.2f} MB, "
+                f"Peak: {np.mean(avg_runs):.2f} MB, "
                 f"Median: {np.mean(median_runs):.2f} MB)"
             ),
         )
