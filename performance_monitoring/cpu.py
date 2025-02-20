@@ -12,9 +12,8 @@ cpu_usage_data = []
 cpu_usage_results = {}
 
 
-def monitor_cpu_usage(interval=0.1):
+def monitor_cpu_usage(interval: float = 0.1):
     global running, cpu_usage_data
-    cpu_usage_data = []
     while running:
         cpu_usage_data.append(psutil.cpu_percent(interval=interval))
 
@@ -40,13 +39,16 @@ def save_data_to_usage_results(func_name: str, cpu_data: List[float]) -> None:
 
 
 def cpu_monitor_decorator(
-    plot_graph=False,
-    to_console=False,
-    save_data=True,
+    plot_graph: bool = False,
+    to_console: bool = False,
+    save_data: bool = True,
+    is_enabled: bool = True,
 ) -> Callable:
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
+            if not is_enabled:
+                return func(*args, **kwargs)
             global running
             running = True
             cpu_thread = threading.Thread(
