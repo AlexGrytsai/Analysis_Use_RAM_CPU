@@ -2,15 +2,15 @@ from collections import deque
 from time import sleep
 from typing import Union, Callable, Iterator, List
 
+from performance_monitoring.cpu import cpu_monitor_decorator, cpu_usage_results
+from performance_monitoring.memory import memory_object_report
+from performance_monitoring.ram import ram_monitor_decorator, ram_usage_results
 from utils.get_ids import (
     generate_ids_in_list,
     generate_ids_in_set,
     generate_ids_in_deque,
     generate_ids_in_dict,
 )
-from performance_monitoring.cpu import cpu_monitor_decorator, cpu_usage_results
-from performance_monitoring.memory import memory_object_report
-from performance_monitoring.ram import ram_monitor_decorator, ram_usage_results
 from utils.graphs import plot_combined_graph_for_cpu, plot_combined_ram_graph
 from utils.redis_test_data_loader import create_list_iterator_from_redis_keys
 
@@ -74,6 +74,4 @@ def main_benchmark_ids_generation(repeat: int = 10) -> None:
         )
 
     plot_combined_graph_for_cpu(cpu_data=cpu_usage_results)
-    plot_combined_ram_graph(
-        ram_data=ram_usage_results,
-    )
+    plot_combined_ram_graph(ram_data=ram_usage_results)
