@@ -49,7 +49,9 @@ def cpu_monitor_decorator(
         def wrapper(*args, **kwargs):
             if not is_enabled:
                 return func(*args, **kwargs)
+
             global running
+
             running = True
             cpu_thread = threading.Thread(
                 target=monitor_cpu_usage, daemon=True
@@ -61,6 +63,7 @@ def cpu_monitor_decorator(
             end_time = time.perf_counter()
 
             running = False
+
             cpu_thread.join()
             if to_console:
                 print_cpu_analytics_to_console(
