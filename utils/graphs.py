@@ -1,113 +1,68 @@
+import numpy as np
+import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
 
-import numpy as np
-from matplotlib import pyplot as plt
 
-
-def plot_individual_graph_for_cpu(
-    cpu_usage: List[float],
-    func_name: str,
-    exec_time: float,
-) -> None:
-    avg_cpu = sum(cpu_usage) / len(cpu_usage) if cpu_usage else 0
-    max_cpu = max(cpu_usage, default=0)
-
-    plt.figure(figsize=(10, 6))
-    time_points = [i * 0.1 for i in range(len(cpu_usage))]
-
-    plt.plot(
-        time_points,
-        cpu_usage,
-        marker="o",
-        color="r",
-        label="CPU Usage (%)",
-    )
-
-    plt.ylim(0, 50)
-
-    plt.title(f"CPU Usage for Function: {func_name}")
-    plt.xlabel("Time (seconds)")
-    plt.ylabel("CPU Usage (%)")
-    plt.ylim(0, 50)
-    plt.grid(True)
-    plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
-    plt.subplots_adjust(bottom=0.3)
-
-    text_x = time_points[-1] * 0.7
-    text_y = 40
-    plt.text(
-        text_x,
-        text_y,
-        f"Exec Time: {exec_time:.2f}s\n"
-        f"Avg CPU: {avg_cpu:.2f}%\n"
-        f"Peak CPU: {max_cpu:.2f}%",
-        fontsize=10,
-        bbox=dict(facecolor="white", alpha=0.8, edgecolor="gray"),
-    )
-
-    plt.show()
-
-
-def plot_combined_graph_for_cpu(
-    cpu_data: Dict[str, List[Tuple[List[float], float]]],
+def plot_resource_usage(
+    resource_data: Dict[str, List[Tuple[List[float], float]]],
+    title: str,
+    y_label: str,
+    y_limit: int = None,
+    detailing: int = 10,
+    is_cpu: bool = False,
 ) -> None:
     plt.figure(figsize=(10, 6))
 
-    for func_name, runs in cpu_data.items():
+    y_limit = y_limit or (
+        100
+        if is_cpu
+        else 1.1
+             * max(
+            max(max(run[0], default=0) for run in data) if data else 0
+            for data in resource_data.values()
+        )
+    )
+
+    for func_name, runs in resource_data.items():
         if not runs:
             continue
 
-        all_cpu_usages = [run[0] for run in runs]
+        all_resource_usages = [run[0] for run in runs]
         exec_times = [run[1] for run in runs]
 
-        max_length = max(map(len, all_cpu_usages), default=0)
+        max_length = max(map(len, all_resource_usages), default=0)
         if max_length == 0:
             continue
 
-        avg_cpu_usage = [
-            np.mean([run[i] for run in all_cpu_usages if i < len(run)])
+        avg_resource_usage = [
+            np.mean([run[i] for run in all_resource_usages if i < len(run)])
             for i in range(max_length)
         ]
 
         avg_exec_time = np.mean(exec_times)
-        x_values = np.linspace(0, avg_exec_time, len(avg_cpu_usage))
+        x_values = np.linspace(0, avg_exec_time, len(avg_resource_usage))
 
-        median_cpu = np.median([np.median(run) for run in all_cpu_usages])
-        max_cpu = np.max(avg_cpu_usage) if avg_cpu_usage else 0
+        median_resource = np.median(
+            [np.median(run) for run in all_resource_usages]
+        )
+        max_resource = np.max(avg_resource_usage) if avg_resource_usage else 0
 
         plt.plot(
             x_values,
-            avg_cpu_usage,
+            avg_resource_usage,
             marker="o",
             label=(
                 f"{func_name} (Exec Time: {avg_exec_time:.2f}s, "
-                f"Median: {median_cpu:.2f}%, Peak: {max_cpu:.2f}%)"
+                f"Median: {median_resource:.2f}{'%' if is_cpu else ' MB'}, "
+                f"Peak: {max_resource:.2f}{'%' if is_cpu else ' MB'})"
             ),
         )
 
-    plt.title("CPU Usage Comparison")
+    plt.title(title)
     plt.xlabel("Time (seconds)")
-    plt.ylabel("CPU Usage (%)")
-    plt.ylim(0, 100)
-    plt.yticks(np.linspace(0, 100, 20))
-    plt.grid(True)
-    plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
-    plt.subplots_adjust(bottom=0.3)
-    plt.show()
-
-
-def plot_individual_ram_graph(mem_usage, interval, func_name):
-    plt.figure(figsize=(10, 6))
-    plt.plot(
-        [i * interval for i in range(len(mem_usage))],
-        mem_usage,
-        marker="o",
-        color="b",
-        label="RAM Usage (MB)",
-    )
-    plt.title(f"RAM Usage for Function: {func_name}")
-    plt.xlabel("Time (seconds)")
-    plt.ylabel("RAM Usage (MB)")
+    plt.ylabel(y_label)
+    plt.ylim(0, y_limit)
+    plt.yticks(np.linspace(0, y_limit, detailing))
     plt.grid(True)
     plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
     plt.subplots_adjust(bottom=0.3)
@@ -115,44 +70,28 @@ def plot_individual_ram_graph(mem_usage, interval, func_name):
 
 
 def plot_combined_ram_graph(
-    ram_data: Dict[str, List[List[float]]],
+    ram_data: Dict[str, List[Tuple[List[float], float]]],
     y_limit: int = None,
     detailing: int = None,
 ) -> None:
-    plt.figure(figsize=(10, 6))
-
-    y_limit = y_limit or 1.1 * max(
-        max(max(run, default=0) for run in data) if data else 0
-        for data in ram_data.values()
+    plot_resource_usage(
+        ram_data,
+        title="RAM Usage Comparison",
+        y_label="RAM Usage (MB)",
+        y_limit=y_limit,
+        detailing=detailing or 10,
+        is_cpu=False,
     )
-    detailing = detailing or 10
 
-    for func_name, runs in ram_data.items():
-        avg_runs = [np.mean(run) for run in runs]
-        max_length = max(map(len, runs), default=0)
-        median_runs = [np.median(run) for run in runs]
-        avg_ram_usage = [
-            np.mean([run[i] for run in runs if i < len(run)])
-            for i in range(max_length)
-        ]
 
-        plt.plot(
-            [i * 0.1 for i in range(len(avg_ram_usage))],
-            avg_ram_usage,
-            marker="o",
-            label=(
-                f"{func_name} (Avg: {np.mean(avg_runs):.2f} MB, "
-                f"Peak: {np.mean(avg_runs):.2f} MB, "
-                f"Median: {np.mean(median_runs):.2f} MB)"
-            ),
-        )
-
-    plt.title("RAM Usage Comparison")
-    plt.xlabel("Time (seconds)")
-    plt.ylabel("RAM Usage (MB)")
-    plt.ylim(0, y_limit)
-    plt.yticks(np.linspace(0, y_limit, detailing))
-    plt.grid(True)
-    plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
-    plt.subplots_adjust(bottom=0.3)
-    plt.show()
+def plot_combined_graph_for_cpu(
+    cpu_data: Dict[str, List[Tuple[List[float], float]]],
+) -> None:
+    plot_resource_usage(
+        cpu_data,
+        title="CPU Usage Comparison",
+        y_label="CPU Usage (%)",
+        y_limit=100,
+        detailing=20,
+        is_cpu=True,
+    )
