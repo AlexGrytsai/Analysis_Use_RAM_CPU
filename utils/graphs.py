@@ -57,26 +57,27 @@ def plot_combined_graph_for_cpu(
         if not runs:
             continue
 
-        max_length = max(len(run) for run in runs)
-        avg_cpu_usage = np.zeros(max_length)
+        median_runs = [np.median(run) for run in runs]
+        max_length = max(map(len, runs), default=0)
 
-        for run in runs:
-            avg_cpu_usage[: len(run)] += run
-        avg_cpu_usage /= len(runs)
+        if max_length == 0:
+            continue
 
-        time_axis = [i * 0.1 for i in range(max_length)]
+        avg_cpu_usage = [
+            np.mean([run[i] for run in runs if i < len(run)])
+            for i in range(max_length)
+        ]
 
         exec_time = max_length * 0.1
-        median_cpu = np.median(avg_cpu_usage)
-        max_cpu = np.max(avg_cpu_usage)
+        max_cpu = np.max(avg_cpu_usage) if avg_cpu_usage else 0
 
         plt.plot(
-            time_axis,
+            [i * 0.1 for i in range(len(avg_cpu_usage))],
             avg_cpu_usage,
             marker="o",
             label=(
                 f"{func_name} (Exec Time: {exec_time:.2f}s, "
-                f"Median: {median_cpu:.2f}%, Peak: {max_cpu:.2f}%)"
+                f"Median: {np.median(median_runs):.2f}%, Peak: {max_cpu:.2f}%)"
             ),
         )
 
@@ -110,14 +111,15 @@ def plot_individual_ram_graph(mem_usage, interval, func_name):
 
 
 def plot_combined_ram_graph(
-    ram_data: dict,
+    ram_data: Dict[str, List[List[float]]],
     y_limit: int = None,
     detailing: int = None,
 ) -> None:
     plt.figure(figsize=(10, 6))
 
     y_limit = y_limit or 1.1 * max(
-        max(data, default=0) for data in ram_data.values()
+        max(max(run, default=0) for run in data) if data else 0
+        for data in ram_data.values()
     )
     detailing = detailing or 10
 
@@ -134,7 +136,10 @@ def plot_combined_ram_graph(
             [i * 0.1 for i in range(len(avg_ram_usage))],
             avg_ram_usage,
             marker="o",
-            label=f"{func_name} (Avg Peak: {np.mean(avg_runs):.2f} MB, Median: {np.mean(median_runs):.2f} MB)",
+            label=(
+                f"{func_name} (Avg Peak: {np.mean(avg_runs):.2f} MB, "
+                f"Median: {np.mean(median_runs):.2f} MB)"
+            ),
         )
 
     plt.title("RAM Usage Comparison")
