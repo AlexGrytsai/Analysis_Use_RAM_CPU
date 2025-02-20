@@ -5,7 +5,8 @@ from typing import Callable, List, Tuple
 
 import psutil
 
-
+monitoring = False
+ram_usage = []
 ram_usage_results = {}
 
 
@@ -33,6 +34,14 @@ def print_ram_usage(
     print(f"  📊 Peak use RAM: {max_mem:.2f} MB")
 
 
+def monitor_ram_usage(interval: float = 0.1) -> None:
+    global monitoring, ram_usage
+    while monitoring:
+        current_mem = psutil.Process().memory_info().rss / 1024 / 1024
+        ram_usage.append(current_mem)
+        time.sleep(interval)
+
+
 def ram_monitor_decorator(
     interval: float = 0.1,
     is_detail: bool = False,
@@ -46,17 +55,11 @@ def ram_monitor_decorator(
             if not is_enabled:
                 return func(*args, **kwargs)
 
-            process = psutil.Process()
-            ram_usage = []
-
-            def monitor():
-                while monitoring:
-                    current_mem = process.memory_info().rss / 1024 / 1024
-                    ram_usage.append(current_mem)
-                    time.sleep(interval)
+            global monitoring
 
             monitoring = True
-            thread = threading.Thread(target=monitor, daemon=True)
+
+            thread = threading.Thread(target=monitor_ram_usage, daemon=True)
             thread.start()
 
             try:
