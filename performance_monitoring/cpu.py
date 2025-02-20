@@ -5,8 +5,6 @@ from typing import Callable, List, Tuple
 
 import psutil
 
-from utils.graphs import plot_individual_graph_for_cpu
-
 running = False
 cpu_usage_data = []
 cpu_usage_results = {}
@@ -33,7 +31,8 @@ def print_cpu_analytics_to_console(
 
 
 def save_data_to_usage_results(
-    func_name: str, cpu_data: Tuple[List[float], float]
+    func_name: str,
+    cpu_data: Tuple[List[float], float],
 ) -> None:
     if func_name not in cpu_usage_results:
         cpu_usage_results[func_name] = []
@@ -41,7 +40,6 @@ def save_data_to_usage_results(
 
 
 def cpu_monitor_decorator(
-    plot_graph: bool = False,
     to_console: bool = False,
     save_data: bool = True,
     is_enabled: bool = True,
@@ -75,13 +73,6 @@ def cpu_monitor_decorator(
                 save_data_to_usage_results(
                     kwargs.get("func_name", func.__name__),
                     (cpu_usage_data, end_time - start_time),
-                )
-
-            if plot_graph:
-                plot_individual_graph_for_cpu(
-                    cpu_usage=cpu_usage_data,
-                    func_name=kwargs.get("func_name", func.__name__),
-                    exec_time=(end_time - start_time),
                 )
 
             return result
