@@ -5,19 +5,24 @@ from typing import Callable, List, Tuple
 
 import psutil
 
-from utils.graphs import plot_individual_ram_graph
 
 ram_usage_results = {}
 
 
-def save_data_to_usage_results(func_name: str, ram_data: List[float]) -> None:
+def save_data_to_usage_results(
+    func_name: str,
+    ram_data: Tuple[List[float], float],
+) -> None:
     if func_name not in ram_usage_results:
         ram_usage_results[func_name] = []
     ram_usage_results[func_name].append(ram_data)
 
 
 def print_ram_usage(
-    mem_usage: list, interval: float, func_name: str, is_detail: bool
+    mem_usage: list,
+    interval: float,
+    func_name: str,
+    is_detail: bool,
 ) -> None:
     print(f"📊 Using RAM in the process of performing a '{func_name}':")
     if is_detail:
@@ -31,7 +36,6 @@ def print_ram_usage(
 def ram_monitor_decorator(
     interval: float = 0.1,
     is_detail: bool = False,
-    plot_graph: bool = False,
     to_console: bool = False,
     save_data: bool = True,
     is_enabled: bool = True,
@@ -56,7 +60,9 @@ def ram_monitor_decorator(
             thread.start()
 
             try:
+                start_time = time.perf_counter()
                 result = func(*args, **kwargs)
+                end_time = time.perf_counter()
             finally:
                 monitoring = False
                 thread.join()
@@ -67,14 +73,10 @@ def ram_monitor_decorator(
                     kwargs.get("func_name", func.__name__),
                     is_detail,
                 )
-            if plot_graph:
-                plot_individual_ram_graph(
-                    ram_usage, interval, kwargs.get("func_name", func.__name__)
-                )
             if save_data:
                 save_data_to_usage_results(
                     kwargs.get("func_name", func.__name__),
-                    ram_usage,
+                    (ram_usage, end_time - start_time),
                 )
 
             return result
