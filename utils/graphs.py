@@ -2,6 +2,78 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
 
+from matplotlib.lines import Line2D
+
+
+def determine_limit_on_axis_y(
+    resource_data: Dict[str, List[Tuple[List[float], float]]],
+    y_limit: int = None,
+    is_cpu: bool = False,
+) -> float:
+    return y_limit or (
+        100
+        if is_cpu
+        else 1.1
+             * max(
+            max(max(run[0], default=0) for run in data) if data else 0
+            for data in resource_data.values()
+        )
+    )
+
+
+def determine_min_on_axis_y(
+    resource_data: Dict[str, List[Tuple[List[float], float]]],
+    is_cpu: bool = False,
+) -> float:
+    return (
+        0
+        if is_cpu
+        else 0.9
+             * min(
+            min(min(run[0], default=0) for run in data) if data else 0
+            for data in resource_data.values()
+        )
+    )
+
+
+def preparation_of_graphs(
+    func_name: str,
+    runs: List[Tuple[List[float], float]],
+    is_cpu: bool,
+) -> list[Line2D] | None:
+    all_resource_usages = [run[0] for run in runs]
+    exec_times = [run[1] for run in runs]
+
+    max_length = max(map(len, all_resource_usages), default=0)
+    if max_length == 0:
+        return None
+
+    avg_resource_usage = []
+    for i in range(max_length):
+        avg_resource_usage.append(
+            np.average(
+                [data[i] for data in all_resource_usages if i < len(data)]
+            )
+        )
+
+    avg_exec_time = np.mean(exec_times)
+    x_values = np.linspace(0, avg_exec_time, len(avg_resource_usage))
+
+    median_resource = np.median(
+        [np.median(run) for run in all_resource_usages]
+    )
+    max_resource = np.max(avg_resource_usage) if avg_resource_usage else 0
+
+    return plt.plot(
+        x_values,
+        avg_resource_usage,
+        label=(
+            f"{func_name} (Exec Time: {avg_exec_time:.2f}s, "
+            f"Median: {median_resource:.2f}{'%' if is_cpu else ' MB'}, "
+            f"Peak: {max_resource:.2f}{'%' if is_cpu else ' MB'})"
+        ),
+    )
+
 
 def plot_resource_usage(
     resource_data: Dict[str, List[Tuple[List[float], float]]],
@@ -13,59 +85,25 @@ def plot_resource_usage(
 ) -> None:
     plt.figure(figsize=(10, 6))
 
-    y_limit = y_limit or (
-        100
-        if is_cpu
-        else 1.1
-             * max(
-            max(max(run[0], default=0) for run in data) if data else 0
-            for data in resource_data.values()
-        )
-    )
+    y_limit = determine_limit_on_axis_y(resource_data, y_limit, is_cpu)
+
+    min_y = determine_min_on_axis_y(resource_data, is_cpu)
 
     for func_name, runs in resource_data.items():
         if not runs:
             continue
 
-        all_resource_usages = [run[0] for run in runs]
-        exec_times = [run[1] for run in runs]
-
-        max_length = max(map(len, all_resource_usages), default=0)
-        if max_length == 0:
-            continue
-
-        avg_resource_usage = [
-            np.mean([run[i] for run in all_resource_usages if i < len(run)])
-            for i in range(max_length)
-        ]
-
-        avg_exec_time = np.mean(exec_times)
-        x_values = np.linspace(0, avg_exec_time, len(avg_resource_usage))
-
-        median_resource = np.median(
-            [np.median(run) for run in all_resource_usages]
-        )
-        max_resource = np.max(avg_resource_usage) if avg_resource_usage else 0
-
-        plt.plot(
-            x_values,
-            avg_resource_usage,
-            marker="o",
-            label=(
-                f"{func_name} (Exec Time: {avg_exec_time:.2f}s, "
-                f"Median: {median_resource:.2f}{'%' if is_cpu else ' MB'}, "
-                f"Peak: {max_resource:.2f}{'%' if is_cpu else ' MB'})"
-            ),
-        )
+        preparation_of_graphs(func_name=func_name, runs=runs, is_cpu=is_cpu)
 
     plt.title(title)
     plt.xlabel("Time (seconds)")
     plt.ylabel(y_label)
-    plt.ylim(0, y_limit)
-    plt.yticks(np.linspace(0, y_limit, detailing))
+    plt.ylim(min_y, y_limit)
+    plt.yticks(np.linspace(min_y, y_limit, detailing))
     plt.grid(True)
     plt.legend(loc="center", bbox_to_anchor=(0.5, -0.3))
     plt.subplots_adjust(bottom=0.3)
+    plt.draw()
     plt.show()
 
 
