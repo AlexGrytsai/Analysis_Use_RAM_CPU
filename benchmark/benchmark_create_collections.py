@@ -36,28 +36,24 @@ def benchmark_id_generation(
         redis_iterator=iterator_1,
         func_name="Generate IDs in List",
     )
-    sleep(1)
 
     ids_deque = measure_resource_usage(
         func=generate_ids_in_deque,
         redis_iterator=iterator_2,
         func_name="Generate IDs in Deque",
     )
-    sleep(1)
 
     ids_set = measure_resource_usage(
         func=generate_ids_in_set,
         redis_iterator=iterator_3,
         func_name="Generate IDs in Set",
     )
-    sleep(1)
 
     ids_dict = measure_resource_usage(
         func=generate_ids_in_dict,
         redis_iterator=iterator_4,
         func_name="Generate IDs in Dict",
     )
-    sleep(1)
 
     if memory_report:
         memory_object_report(ids_list)
@@ -66,7 +62,7 @@ def benchmark_id_generation(
         memory_object_report(ids_dict)
 
 
-def main_benchmark_ids_generation(repeat: int = 10) -> None:
+def main_benchmark_ids_generation(repeat: int = 1) -> None:
     for _ in range(repeat):
         benchmark_id_generation(
             list_iterator=create_list_iterator_from_redis_keys(),

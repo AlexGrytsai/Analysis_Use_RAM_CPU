@@ -71,14 +71,12 @@ def benchmark_validate_data(
             key_list=redis_keys, data_structure=list
         )
     )
-    sleep(1)
 
     validated_data_from_deque = validate_data_from_deque(
         raw_data_deque=fetch_data_from_redis_for_structure(
             key_list=redis_keys, data_structure=deque
         )
     )
-    sleep(1)
 
     validated_data_from_dict = validate_data_from_dict(
         raw_data_dict=fetch_data_from_redis_for_structure(
@@ -90,7 +88,6 @@ def benchmark_validate_data(
             key_list=redis_keys, data_structure=set
         )
     )
-    sleep(1)
 
     if memory_report:
         memory_object_report(validated_data_from_list)
@@ -101,7 +98,7 @@ def benchmark_validate_data(
 
 def main_benchmark_validate_data(
     list_keys: List[str],
-    repeat: int = 10,
+    repeat: int = 1,
 ) -> None:
     for _ in range(repeat):
         benchmark_validate_data(redis_keys=list_keys, memory_report=False)

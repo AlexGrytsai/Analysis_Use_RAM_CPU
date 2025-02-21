@@ -85,7 +85,7 @@ def get_value_from_redis(key: str) -> Dict[str, Any]:
 
 def main_benchmark_add_data(
     list_keys: List[str],
-    repeat: int = 10,
+    repeat: int = 1,
 ) -> None:
     for _ in range(repeat):
         benchmark_data_structures(

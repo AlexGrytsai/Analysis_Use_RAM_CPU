@@ -78,7 +78,7 @@ def run_membership_benchmark(
     sleep(1)
 
 
-def main_benchmark_membership(list_keys: List[str], repeat: int = 10) -> None:
+def main_benchmark_membership(list_keys: List[str], repeat: int = 1) -> None:
     for _ in range(repeat):
         run_membership_benchmark(
             list_keys_with_data=list_keys,
