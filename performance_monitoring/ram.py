@@ -19,7 +19,7 @@ def save_data_to_usage_results(
 ) -> None:
     if r_client:
         try:
-            r_client.set(func_name, json.dumps(ram_data))
+            r_client.set(f"ram_usage_{func_name}", json.dumps(ram_data))
         except Exception as exc:
             raise Exception(f"Failed to save RAM usage data to Redis: {exc}")
     else:

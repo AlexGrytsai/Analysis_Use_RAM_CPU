@@ -44,7 +44,7 @@ def save_data_to_usage_results(
 ) -> None:
     if r_client:
         try:
-            r_client.set(func_name, json.dumps(cpu_data))
+            r_client.set(f"cpu_usage_{func_name}", json.dumps(cpu_data))
         except Exception as exc:
             raise Exception(f"Failed to save CPU usage data to Redis: {exc}")
     if func_name not in cpu_usage_results:
