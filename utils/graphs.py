@@ -37,9 +37,7 @@ def determine_min_on_axis_y(
 
 
 def preparation_of_graphs(
-    func_name: str,
-    runs: List[Tuple[List[float], float]],
-    is_cpu: bool,
+    func_name: str, runs: List[Tuple[List[float], float]], is_cpu: bool
 ) -> list[Line2D] | None:
     all_resource_usages = [run[0] for run in runs]
     exec_times = [run[1] for run in runs]
