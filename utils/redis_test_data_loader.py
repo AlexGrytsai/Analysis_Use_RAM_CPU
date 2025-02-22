@@ -122,3 +122,14 @@ def prepare_data_for_benchmark(
         num_of_objects=num_keys_with_data,
         file_path=file_path,
     )
+
+
+if __name__ == "__main__":
+    num_ids = 100_000
+    num_ids_with_data = 5_000
+
+    prepare_data_for_benchmark(
+        file_path="test_data.json",
+        total_keys=num_ids,
+        num_keys_with_data=num_ids_with_data,
+    )
