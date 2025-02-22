@@ -7,6 +7,8 @@ from typing import Callable, List, Tuple, Optional
 import psutil
 from redis import Redis
 
+from utils.redis_for_save_usage_data import usage_r_client
+
 monitoring = False
 ram_usage = []
 ram_usage_results = {}
@@ -19,13 +21,12 @@ def save_data_to_usage_results(
 ) -> None:
     if r_client:
         try:
-            r_client.set(f"ram_usage_{func_name}", json.dumps(ram_data))
+            r_client.rpush(f"ram_usage_{func_name}", json.dumps(ram_data))
         except Exception as exc:
             raise Exception(f"Failed to save RAM usage data to Redis: {exc}")
-    else:
-        if func_name not in ram_usage_results:
-            ram_usage_results[func_name] = []
-        ram_usage_results[func_name].append(ram_data)
+    if func_name not in ram_usage_results:
+        ram_usage_results[func_name] = []
+    ram_usage_results[func_name].append(ram_data)
 
 
 def print_ram_usage(
@@ -56,7 +57,7 @@ def monitor_ram_usage(interval: float = 0.1) -> None:
 
 def ram_monitor_decorator(
     interval: float = 0.1,
-    r_client: Optional[Redis] = None,
+    r_client: Optional[Redis] = usage_r_client,
     is_detail: Optional[bool] = False,
     to_console: Optional[bool] = False,
     save_data: Optional[bool] = True,
