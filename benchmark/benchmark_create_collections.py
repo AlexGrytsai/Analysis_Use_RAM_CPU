@@ -4,12 +4,7 @@ from typing import Union, Callable, Iterator, Optional
 from performance_monitoring.cpu import cpu_monitor_decorator
 from performance_monitoring.memory import memory_object_report
 from performance_monitoring.ram import ram_monitor_decorator
-from utils.get_ids import (
-    generate_ids_in_list,
-    generate_ids_in_deque,
-    generate_ids_in_set,
-    generate_ids_in_dict,
-)
+from utils.get_ids import generate_ids_in_list
 from utils.redis_test_data_loader import (
     redis_client,
 )
@@ -42,20 +37,8 @@ def benchmark_id_generation(
 
 
 def main_benchmark_ids_generation(
-    func: Callable, func_name: str, repeat: int = 10
+    func: Callable, func_name: str, repeat: int = 2
 ) -> None:
-    """
-    func:
-        - generate_ids_in_list
-        - generate_ids_in_deque
-        - generate_ids_in_set
-        - generate_ids_in_dict
-    func_name:
-        - Generate IDs in List
-        - Generate IDs in Deque
-        - Generate IDs in Set
-        - Generate IDs in Dict
-    """
     for _ in range(repeat):
         benchmark_id_generation(
             func=func,
@@ -66,15 +49,13 @@ def main_benchmark_ids_generation(
 
 
 if __name__ == "__main__":
+    """
+    func:
+        - generate_ids_in_list -> Generate IDs in List
+        - generate_ids_in_deque -> Generate IDs in Deque
+        - generate_ids_in_set -> Generate IDs in Set
+        - generate_ids_in_dict -> Generate IDs in Dict
+    """
     main_benchmark_ids_generation(
         func=generate_ids_in_list, func_name="Generate IDs in List"
-    )
-    main_benchmark_ids_generation(
-        func=generate_ids_in_deque, func_name="Generate IDs in Deque"
-    )
-    main_benchmark_ids_generation(
-        func=generate_ids_in_set, func_name="Generate IDs in Set"
-    )
-    main_benchmark_ids_generation(
-        func=generate_ids_in_dict, func_name="Generate IDs in Dict"
     )
