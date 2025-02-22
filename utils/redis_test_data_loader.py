@@ -126,7 +126,9 @@ def prepare_data_for_benchmark(
 
 if __name__ == "__main__":
     num_ids = 100_000
-    num_ids_with_data = 5_000
+    num_ids_with_data = 10_000
+
+    clean_redis_database()
 
     prepare_data_for_benchmark(
         file_path="test_data.json",
