@@ -10,11 +10,12 @@ from performance_monitoring.cpu import cpu_monitor_decorator, cpu_usage_results
 from performance_monitoring.memory import memory_object_report
 from performance_monitoring.ram import ram_monitor_decorator, ram_usage_results
 from utils.graphs import plot_combined_graph_for_cpu, plot_combined_ram_graph
+from utils.redis_for_save_usage_data import usage_r_client
 from utils.validators import TenderDataValidator
 
 
-@ram_monitor_decorator()
-@cpu_monitor_decorator()
+@cpu_monitor_decorator(r_client=usage_r_client)
+@ram_monitor_decorator(r_client=usage_r_client)
 def validate_data_from_list(
     raw_data_list: List[Dict[str, Any]],
 ) -> List[TenderDataValidator]:
@@ -25,8 +26,8 @@ def validate_data_from_list(
     return clean_data
 
 
-@ram_monitor_decorator()
-@cpu_monitor_decorator()
+@cpu_monitor_decorator(r_client=usage_r_client)
+@ram_monitor_decorator(r_client=usage_r_client)
 def validate_data_from_deque(
     raw_data_deque: deque,
 ) -> deque[TenderDataValidator]:
@@ -37,8 +38,8 @@ def validate_data_from_deque(
     return clean_data
 
 
-@ram_monitor_decorator()
-@cpu_monitor_decorator()
+@cpu_monitor_decorator(r_client=usage_r_client)
+@ram_monitor_decorator(r_client=usage_r_client)
 def validate_data_from_dict(
     raw_data_dict: Dict[str, Any],
 ) -> Dict[str, TenderDataValidator]:
@@ -49,8 +50,8 @@ def validate_data_from_dict(
     return clean_data
 
 
-@ram_monitor_decorator()
-@cpu_monitor_decorator()
+@cpu_monitor_decorator(r_client=usage_r_client)
+@ram_monitor_decorator(r_client=usage_r_client)
 def validate_data_from_set(
     raw_data_set: Set,
 ) -> Set[str]:
