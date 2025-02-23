@@ -35,6 +35,13 @@ def create_iterator_from_redis_keys(
     return r_client.scan_iter("*")
 
 
+def get_value_from_redis(
+    key: str,
+    r_client: Redis = r_client_prepare,
+) -> Dict[str, Any]:
+    return json.loads(r_client.get(key))
+
+
 def get_test_data_from_json(
     file_path: str,
     num_of_objects: int,
@@ -84,6 +91,10 @@ def add_empty_keys_to_redis(
         r_client.set(key, "")
 
 
+def get_list_keys_with_data(r_client: Redis = r_client_prepare) -> List[str]:
+    return r_client.lrange("list_keys_with_data", 0, -1)
+
+
 def fetch_data_from_redis_for_structure(
     data_structure: Type[Union[list, deque, dict, set]],
     r_client: Redis = r_client_prepare,
@@ -91,7 +102,7 @@ def fetch_data_from_redis_for_structure(
 ) -> Union[
     List[dict[str, Any]], deque[Dict[str, Any]], Dict[str, Any], Set[bytes]
 ]:
-    ids_list_with_data = r_client.lrange("list_keys_with_data", 0, -1)
+    ids_list_with_data = get_list_keys_with_data()
     if data_structure is list:
         return [json.loads(r_client.get(key)) for key in ids_list_with_data]
 
