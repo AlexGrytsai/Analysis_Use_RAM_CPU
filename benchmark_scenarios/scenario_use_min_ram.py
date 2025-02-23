@@ -1,4 +1,6 @@
-from typing import List
+from typing import List, Callable, Type
+
+from pympler import asizeof
 
 from performance_monitoring.cpu import cpu_monitor_decorator
 from performance_monitoring.ram import ram_monitor_decorator
@@ -130,4 +132,30 @@ def scenario_v6(key_with_data: List[str], **kwargs) -> None:
             TenderDataValidator(
                 **get_value_from_redis(key=id_data)
             ).model_dump_json(),
+        )
+
+
+def run_benchmark_scenarios(
+    scenario: Type[Callable],
+    is_print_size: bool = False,
+) -> None:
+    ids_with_data = create_iterator_from_redis_keys()
+
+    data_for_benchmark = {
+        scenario_v1: "The worst of the use of RAM and execution",
+        scenario_v2: "The worst of the use of RAM",
+        scenario_v3: "scenario_v3",
+        scenario_v4: "scenario_v4",
+        scenario_v5: "Omtymal for RAM and execution",
+        scenario_v6: "The most optimal from memory",
+    }
+
+    data_from_scenario = scenario(
+        key_with_data=ids_with_data, func_name=data_for_benchmark[scenario]
+    )
+
+    if is_print_size:
+        print(
+            f"Size of {data_for_benchmark[scenario]}: "
+            f"{asizeof.asizeof(data_from_scenario) / 1024 / 1024:.2f} MB"
         )
