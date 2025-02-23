@@ -16,7 +16,12 @@ from typing import (
 import redis
 from redis import Redis
 
-redis_client = redis.Redis(host="localhost", port=6379, db=3)
+redis_client = redis.Redis(
+    host="localhost",
+    port=6379,
+    db=3,
+    decode_responses=True,
+)
 
 
 def change_object_id_in_test_data(obj: dict, new_id: str) -> dict:
@@ -89,20 +94,17 @@ def fetch_data_from_redis_for_structure(
     List[dict[str, Any]], deque[Dict[str, Any]], Dict[str, Any], Set[bytes]
 ]:
     if data_structure is list:
-        return [json.loads(r_client.get(key).decode()) for key in key_list]
+        return [json.loads(r_client.get(key)) for key in key_list]
 
     elif data_structure is deque:
-        return deque(
-            json.loads(r_client.get(key).decode()) for key in key_list
-        )
+        return deque(json.loads(r_client.get(key)) for key in key_list)
 
     elif data_structure is set:
         return {r_client.get(key) for key in key_list}
 
     elif data_structure is dict:
         return {
-            uuid.uuid4().hex: json.loads(r_client.get(key).decode())
-            for key in key_list
+            uuid.uuid4().hex: json.loads(r_client.get(key)) for key in key_list
         }
 
     raise ValueError(f"Unsupported data structure: {data_structure}")
