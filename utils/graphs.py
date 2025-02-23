@@ -151,3 +151,7 @@ def show_graphs():
 
     plot_combined_ram_graph(ram_data=data_for_ram_graph)
     plot_combined_graph_for_cpu(cpu_data=data_for_cpu_graph)
+
+
+if __name__ == "__main__":
+    show_graphs()
