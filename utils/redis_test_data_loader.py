@@ -86,25 +86,28 @@ def add_empty_keys_to_redis(
 
 
 def fetch_data_from_redis_for_structure(
-    key_list: List[str],
     data_structure: Type[Union[list, deque, dict, set]],
     r_client: Redis = r_client_prepare,
     **kwargs,
 ) -> Union[
     List[dict[str, Any]], deque[Dict[str, Any]], Dict[str, Any], Set[bytes]
 ]:
+    ids_list_with_data = r_client.lrange("list_keys_with_data", 0, -1)
     if data_structure is list:
-        return [json.loads(r_client.get(key)) for key in key_list]
+        return [json.loads(r_client.get(key)) for key in ids_list_with_data]
 
     elif data_structure is deque:
-        return deque(json.loads(r_client.get(key)) for key in key_list)
+        return deque(
+            json.loads(r_client.get(key)) for key in ids_list_with_data
+        )
 
     elif data_structure is set:
-        return {r_client.get(key) for key in key_list}
+        return {r_client.get(key) for key in ids_list_with_data}
 
     elif data_structure is dict:
         return {
-            uuid.uuid4().hex: json.loads(r_client.get(key)) for key in key_list
+            uuid.uuid4().hex: json.loads(r_client.get(key))
+            for key in ids_list_with_data
         }
 
     raise ValueError(f"Unsupported data structure: {data_structure}")
