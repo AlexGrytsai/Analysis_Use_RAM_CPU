@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
 
+from utils.redis_for_save_usage_data import load_all_ram_usage_from_redis
+
 
 def determine_limit_on_axis_y(
     resource_data: Dict[str, List[Tuple[List[float], float]]],
@@ -141,3 +143,11 @@ def plot_combined_graph_for_cpu(
         detailing=20,
         is_cpu=True,
     )
+
+
+def show_graphs():
+    data_for_ram_graph = load_all_ram_usage_from_redis(key_prefix="ram_usage_")
+    data_for_cpu_graph = load_all_ram_usage_from_redis(key_prefix="cpu_usage_")
+
+    plot_combined_ram_graph(ram_data=data_for_ram_graph)
+    plot_combined_graph_for_cpu(cpu_data=data_for_cpu_graph)
