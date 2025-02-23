@@ -99,10 +99,5 @@ def benchmark_validate_data(
 
 def main_benchmark_validate_data(
     list_keys: List[str],
-    repeat: int = 1,
 ) -> None:
-    for _ in range(repeat):
-        benchmark_validate_data(redis_keys=list_keys, memory_report=False)
-
-    plot_combined_graph_for_cpu(cpu_data=cpu_usage_results)
-    plot_combined_ram_graph(ram_data=ram_usage_results, y_limit=1200)
+    benchmark_validate_data(redis_keys=list_keys, memory_report=False)
