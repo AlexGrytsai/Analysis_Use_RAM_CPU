@@ -1,5 +1,5 @@
 from collections import deque
-from typing import Union, Callable, Iterator
+from typing import Union, Callable, Iterator, Type
 
 from pympler import asizeof
 
@@ -26,25 +26,26 @@ def create_collection_with_simple_data(
 
 
 def run_benchmark_simple_collections(
-    num_test: int,
+    type_collection: Type[Union[list, deque, dict, set]],
+    is_print_size: bool = False,
 ) -> None:
     data_for_benchmark = {
-        1: (generate_ids_in_list, "Generate IDs in List"),
-        2: (generate_ids_in_deque, "Generate IDs in Deque"),
-        3: (generate_ids_in_set, "Generate IDs in Set"),
-        4: (generate_ids_in_dict, "Generate IDs in Dict"),
+        list: (generate_ids_in_list, "Generate IDs in List"),
+        deque: (generate_ids_in_deque, "Generate IDs in Deque"),
+        set: (generate_ids_in_set, "Generate IDs in Set"),
+        dict: (generate_ids_in_dict, "Generate IDs in Dict"),
     }
 
     ids_collection = create_collection_with_simple_data(
-        func=data_for_benchmark[num_test][0],
-        func_name=data_for_benchmark[num_test][1],
+        func=data_for_benchmark[type_collection][0],
+        func_name=data_for_benchmark[type_collection][1],
     )
-
-    print(
-        f"Size of {data_for_benchmark[num_test][1]}: "
-        f"{asizeof.asizeof(ids_collection) / 1024:.2f} KB"
-    )
+    if is_print_size:
+        print(
+            f"Size of {data_for_benchmark[type_collection][1]}: "
+            f"{asizeof.asizeof(ids_collection) / 1024:.2f} KB"
+        )
 
 
 if __name__ == "__main__":
-    run_benchmark_simple_collections(1)
+    run_benchmark_simple_collections(list, is_print_size=True)
