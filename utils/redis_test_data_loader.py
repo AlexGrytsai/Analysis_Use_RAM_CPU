@@ -29,11 +29,10 @@ def change_object_id_in_test_data(obj: dict, new_id: str) -> dict:
     return obj
 
 
-def create_list_iterator_from_redis_keys(
+def create_iterator_from_redis_keys(
     r_client: Redis = r_client_prepare,
-    num_iter: int = 4,
-) -> List[Iterator[bytes]]:
-    return [r_client.scan_iter("*") for _ in range(num_iter)]
+) -> Iterator[str]:
+    return r_client.scan_iter("*")
 
 
 def get_test_data_from_json(
