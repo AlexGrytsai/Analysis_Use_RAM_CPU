@@ -16,7 +16,7 @@ from typing import (
 import redis
 from redis import Redis
 
-redis_client = redis.Redis(
+r_client_prepare = redis.Redis(
     host="localhost",
     port=6379,
     db=3,
@@ -30,7 +30,7 @@ def change_object_id_in_test_data(obj: dict, new_id: str) -> dict:
 
 
 def create_list_iterator_from_redis_keys(
-    r_client: Redis = redis_client,
+    r_client: Redis = r_client_prepare,
     num_iter: int = 4,
 ) -> List[Iterator[bytes]]:
     return [r_client.scan_iter("*") for _ in range(num_iter)]
@@ -59,14 +59,14 @@ def generate_uuid_keys_for_redis(
         yield uuid.uuid4().hex
 
 
-def clean_redis_database(r_client: Redis = redis_client) -> None:
+def clean_redis_database(r_client: Redis = r_client_prepare) -> None:
     r_client.flushdb()
 
 
 def add_data_to_redis(
     num_of_objects: int,
     file_path: str,
-    r_client: Redis = redis_client,
+    r_client: Redis = r_client_prepare,
 ) -> List[str]:
     list_key_with_data = []
     for data, key in get_test_data_from_json(
@@ -79,7 +79,7 @@ def add_data_to_redis(
 
 def add_empty_keys_to_redis(
     num_of_keys: int,
-    r_client: Redis = redis_client,
+    r_client: Redis = r_client_prepare,
 ) -> None:
     for key in generate_uuid_keys_for_redis(num_of_keys=num_of_keys):
         r_client.set(key, "")
@@ -88,7 +88,7 @@ def add_empty_keys_to_redis(
 def fetch_data_from_redis_for_structure(
     key_list: List[str],
     data_structure: Type[Union[list, deque, dict, set]],
-    r_client: Redis = redis_client,
+    r_client: Redis = r_client_prepare,
     **kwargs,
 ) -> Union[
     List[dict[str, Any]], deque[Dict[str, Any]], Dict[str, Any], Set[bytes]
@@ -114,7 +114,7 @@ def prepare_data_for_benchmark(
     total_keys: int,
     num_keys_with_data: int,
     file_path: str,
-    r_client: Redis = redis_client,
+    r_client: Redis = r_client_prepare,
 ) -> List[str]:
     add_empty_keys_to_redis(
         r_client=r_client, num_of_keys=total_keys - num_keys_with_data
@@ -132,8 +132,10 @@ if __name__ == "__main__":
 
     clean_redis_database()
 
-    prepare_data_for_benchmark(
-        file_path="test_data.json",
+    list_ids_with_data = prepare_data_for_benchmark(
+        file_path="../test_data.json",
         total_keys=num_ids,
         num_keys_with_data=num_ids_with_data,
     )
+
+    r_client_prepare.rpush("list_keys_with_data", *list_ids_with_data)
