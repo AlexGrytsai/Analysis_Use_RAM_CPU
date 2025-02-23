@@ -1,7 +1,7 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
 
+import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.lines import Line2D
 
 
@@ -55,21 +55,31 @@ def preparation_of_graphs(
         )
 
     avg_exec_time = np.mean(exec_times)
-    x_values = np.linspace(0, avg_exec_time, len(avg_resource_usage))
+    x_values = np.linspace(0, np.mean(exec_times), len(avg_resource_usage))
 
     median_resource = np.median(
         [np.median(run) for run in all_resource_usages]
     )
     max_resource = np.max(avg_resource_usage) if avg_resource_usage else 0
+    min_resource = np.min(avg_resource_usage) if avg_resource_usage else 0
+
+    if is_cpu:
+        label = (
+            f"{func_name} (Exec Time: {avg_exec_time:.2f}s, "
+            f"Median: {median_resource:.2f}%, "
+            f"Peak: {max_resource:.2f}%)"
+        )
+    else:
+        label = (
+            f"{func_name} (Min: {min_resource:.2f} MB, "
+            f"Max: {max_resource:.2f} MB, "
+            f"Delta: {max_resource - min_resource:.2f} MB)"
+        )
 
     return plt.plot(
         x_values,
         avg_resource_usage,
-        label=(
-            f"{func_name} (Exec Time: {avg_exec_time:.2f}s, "
-            f"Median: {median_resource:.2f}{'%' if is_cpu else ' MB'}, "
-            f"Peak: {max_resource:.2f}{'%' if is_cpu else ' MB'})"
-        ),
+        label=label,
     )
 
 
