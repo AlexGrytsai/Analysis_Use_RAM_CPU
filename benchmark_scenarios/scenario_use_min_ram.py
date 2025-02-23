@@ -43,5 +43,25 @@ def scenario_use_min_ram_sequence_not_important_v1(
     return clean_data
 
 
+@cpu_monitor_decorator(r_client=usage_r_client)
+@ram_monitor_decorator(r_client=usage_r_client)
+def scenario_use_min_ram_sequence_not_important_v2(
+    key_with_data: List[str],
+) -> list[TenderDataValidator]:
+    all_ids_list = [id_ for id_ in create_iterator_from_redis_keys()]
+
+    all_ids_set = set(all_ids_list)
+    membership_list = [id_ for id_ in key_with_data if id_ in all_ids_set]
+
+    raw_data_list = [
+        get_value_from_redis(key=id_data) for id_data in membership_list
+    ]
+
+    clean_data = [TenderDataValidator(**data) for data in raw_data_list]
+
+    return clean_data
+
+
 if __name__ == "__main__":
-    scenario_use_min_ram_sequence_not_important_v1(get_list_keys_with_data())
+    # scenario_use_min_ram_sequence_not_important_v1(get_list_keys_with_data())
+    scenario_use_min_ram_sequence_not_important_v2(get_list_keys_with_data())
