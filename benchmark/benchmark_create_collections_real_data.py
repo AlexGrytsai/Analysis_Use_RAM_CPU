@@ -22,24 +22,28 @@ def load_data_to_collection_from_redis(
     return fetch_data_from_redis_for_structure(data_structure=data_structure)
 
 
-def run_benchmark_create_collections_real_data(num_test: int) -> None:
+def run_benchmark_create_collections_real_data(
+    type_collection: Type[Union[list, deque, dict, set]],
+    is_print_size: bool = False,
+) -> None:
     data_for_benchmark = {
-        1: (list, "Create List with real data"),
-        2: (deque, "Create Deque with real data"),
-        3: (set, "Create Set with real data"),
-        4: (dict, "Create Dict with real data"),
+        list: "Create List with real data",
+        deque: "Create Deque with real data",
+        set: "Create Set with real data",
+        dict: "Create Dict with real data",
     }
 
     collection = load_data_to_collection_from_redis(
-        data_structure=data_for_benchmark[num_test][0],
-        func_name=data_for_benchmark[num_test][1],
+        data_structure=type_collection,
+        func_name=data_for_benchmark[type_collection],
     )
 
-    print(
-        f"Size of {data_for_benchmark[num_test][1]}: "
-        f"{asizeof.asizeof(collection) / 1024 / 1024:.2f} MB"
-    )
+    if is_print_size:
+        print(
+            f"Size of {data_for_benchmark[type_collection]}: "
+            f"{asizeof.asizeof(collection) / 1024 / 1024:.2f} MB"
+        )
 
 
 if __name__ == "__main__":
-    run_benchmark_create_collections_real_data(num_test=3)
+    run_benchmark_create_collections_real_data(list, is_print_size=True)
