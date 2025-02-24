@@ -1,10 +1,9 @@
 from collections import deque
 from typing import Union, List, Dict, Type
 
-from benchmark.benchmark_create_collections import (
+from benchmark.benchmark_create_simple_collections import (
     create_collection_with_simple_data,
 )
-
 from performance_monitoring.cpu import cpu_monitor_decorator
 from performance_monitoring.ram import ram_monitor_decorator
 from utils.get_ids import (
