@@ -1,3 +1,4 @@
+from collections import deque
 from typing import List, Callable, Type, Dict, Any
 
 from pympler import asizeof
@@ -137,13 +138,22 @@ def scenario_v6(key_with_data: List[str], **kwargs) -> None:
 
 @cpu_monitor_decorator(r_client=usage_r_client)
 @ram_monitor_decorator(r_client=usage_r_client)
-def scenario_v7(
-    key_with_data: List[str], **kwargs
-) -> List[Dict[str, Any]]:
+def scenario_v7(key_with_data: List[str], **kwargs) -> List[Dict[str, Any]]:
     raw_data_list = []
 
     for id_data in key_with_data:
         raw_data_list.insert(0, get_value_from_redis(key=id_data))
+
+    return raw_data_list
+
+
+@cpu_monitor_decorator(r_client=usage_r_client)
+@ram_monitor_decorator(r_client=usage_r_client)
+def scenario_v8(key_with_data: List[str], **kwargs) -> deque[Dict[str, Any]]:
+    raw_data_list = deque([])
+
+    for id_data in key_with_data:
+        raw_data_list.appendleft(get_value_from_redis(key=id_data))
 
     return raw_data_list
 
@@ -162,6 +172,7 @@ def run_benchmark_scenarios(
         scenario_v5: "Scenario #5",
         scenario_v6: "Scenario #6",
         scenario_v7: "Adding data to the beginning of the list",
+        scenario_v8: "Adding data to the beginning of the deque",
     }
 
     data_from_scenario = scenario(
