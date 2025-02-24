@@ -142,12 +142,12 @@ def run_benchmark_scenarios(
     ids_with_data = create_iterator_from_redis_keys()
 
     data_for_benchmark = {
-        scenario_v1: "The worst of the use of RAM and execution",
-        scenario_v2: "The worst of the use of RAM",
-        scenario_v3: "scenario_v3",
-        scenario_v4: "scenario_v4",
-        scenario_v5: "Omtymal for RAM and execution",
-        scenario_v6: "The most optimal from memory",
+        scenario_v1: "Scenario #1",
+        scenario_v2: "Scenario #2",
+        scenario_v3: "Scenario #3",
+        scenario_v4: "Scenario #4",
+        scenario_v5: "Scenario #5",
+        scenario_v6: "Scenario #6",
     }
 
     data_from_scenario = scenario(
