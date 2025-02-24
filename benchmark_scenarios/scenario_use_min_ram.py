@@ -9,6 +9,7 @@ from utils.redis_for_save_usage_data import usage_r_client
 from utils.redis_test_data_loader import (
     create_iterator_from_redis_keys,
     get_value_from_redis,
+    get_list_keys_with_data,
 )
 from utils.validators import TenderDataValidator
 
@@ -162,7 +163,7 @@ def run_benchmark_scenarios(
     scenario: Type[Callable],
     is_print_size: bool = False,
 ) -> None:
-    ids_with_data = create_iterator_from_redis_keys()
+    ids_with_data = get_list_keys_with_data()
 
     data_for_benchmark = {
         scenario_v1: "Scenario #1",
@@ -184,3 +185,7 @@ def run_benchmark_scenarios(
             f"Size of {data_for_benchmark[scenario]}: "
             f"{asizeof.asizeof(data_from_scenario) / 1024 / 1024:.2f} MB"
         )
+
+
+if __name__ == "__main__":
+    run_benchmark_scenarios(scenario=scenario_v8, is_print_size=True)
