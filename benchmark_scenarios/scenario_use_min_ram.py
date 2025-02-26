@@ -1,5 +1,6 @@
 from collections import deque
-from typing import List, Callable, Type, Dict, Any
+from concurrent.futures import ProcessPoolExecutor
+from typing import List, Callable, Type
 
 from pympler import asizeof
 
@@ -103,6 +104,12 @@ def scenario_v4(
     return clean_data
 
 
+def process_tender_data(id_data: str) -> str:
+    return TenderDataValidator(
+        **get_value_from_redis(key=id_data)
+    ).model_dump_json()
+
+
 @cpu_monitor_decorator(r_client=usage_r_client)
 @ram_monitor_decorator(r_client=usage_r_client)
 def scenario_v5(key_with_data: List[str], **kwargs) -> List[str]:
@@ -112,11 +119,21 @@ def scenario_v5(key_with_data: List[str], **kwargs) -> List[str]:
 
     clean_data = []
     for id_data in membership_list:
-        clean_data.append(
-            TenderDataValidator(
-                **get_value_from_redis(key=id_data)
-            ).model_dump_json()
-        )
+        clean_data.append(process_tender_data(id_data))
+
+    return clean_data
+
+
+@cpu_monitor_decorator(r_client=usage_r_client)
+@ram_monitor_decorator(r_client=usage_r_client)
+def scenario_v5_multiprocessing(
+    key_with_data: List[str], max_workers: int = None, **kwargs
+) -> List[str]:
+    all_ids_set = set(create_iterator_from_redis_keys())
+    membership_list = set(key_with_data) & all_ids_set
+
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        clean_data = list(executor.map(process_tender_data, membership_list))
 
     return clean_data
 
@@ -139,22 +156,22 @@ def scenario_v6(key_with_data: List[str], **kwargs) -> None:
 
 @cpu_monitor_decorator(r_client=usage_r_client)
 @ram_monitor_decorator(r_client=usage_r_client)
-def scenario_v7(key_with_data: List[str], **kwargs) -> List[Dict[str, Any]]:
+def scenario_v7(**kwargs) -> List[str]:
     raw_data_list = []
 
-    for id_data in key_with_data:
-        raw_data_list.insert(0, get_value_from_redis(key=id_data))
+    for id_ in create_iterator_from_redis_keys():
+        raw_data_list.insert(0, id_)
 
     return raw_data_list
 
 
 @cpu_monitor_decorator(r_client=usage_r_client)
 @ram_monitor_decorator(r_client=usage_r_client)
-def scenario_v8(key_with_data: List[str], **kwargs) -> deque[Dict[str, Any]]:
+def scenario_v8(**kwargs) -> deque[List[str]]:
     raw_data_list = deque([])
 
-    for id_data in key_with_data:
-        raw_data_list.appendleft(get_value_from_redis(key=id_data))
+    for id_ in create_iterator_from_redis_keys():
+        raw_data_list.appendleft(id_)
 
     return raw_data_list
 
@@ -171,6 +188,7 @@ def run_benchmark_scenarios(
         scenario_v3: "Scenario #3",
         scenario_v4: "Scenario #4",
         scenario_v5: "Scenario #5",
+        scenario_v5_multiprocessing: "Scenario #5 Multiprocessing",
         scenario_v6: "Scenario #6",
         scenario_v7: "Adding data to the beginning of the list",
         scenario_v8: "Adding data to the beginning of the deque",
@@ -188,4 +206,4 @@ def run_benchmark_scenarios(
 
 
 if __name__ == "__main__":
-    run_benchmark_scenarios(scenario=scenario_v8, is_print_size=True)
+    run_benchmark_scenarios(scenario=scenario_v1, is_print_size=True)
