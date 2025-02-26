@@ -19,7 +19,7 @@ from utils.redis_test_data_loader import r_client_prepare
 @ram_monitor_decorator(r_client=usage_r_client, is_enabled=True)
 def create_collection_with_simple_data(
     func: Callable,
-    redis_iterator: Iterator[str] = r_client_prepare.scan_iter("*"),
+    redis_iterator: Iterator[str] = None,
     **kwargs,
 ) -> Union[list, dict, set, deque]:
     return func(redis_iterator)
@@ -27,6 +27,7 @@ def create_collection_with_simple_data(
 
 def run_benchmark_simple_collections(
     type_collection: Type[Union[list, deque, dict, set]],
+    redis_iterator: Iterator[str] = None,
     is_print_size: bool = False,
 ) -> None:
     data_for_benchmark = {
@@ -38,6 +39,7 @@ def run_benchmark_simple_collections(
 
     ids_collection = create_collection_with_simple_data(
         func=data_for_benchmark[type_collection][0],
+        redis_iterator=redis_iterator,
         func_name=data_for_benchmark[type_collection][1],
     )
     if is_print_size:
@@ -48,4 +50,8 @@ def run_benchmark_simple_collections(
 
 
 if __name__ == "__main__":
-    run_benchmark_simple_collections(list, is_print_size=True)
+    run_benchmark_simple_collections(
+        type_collection=list,
+        redis_iterator=r_client_prepare.scan_iter("*"),
+        is_print_size=True,
+    )
